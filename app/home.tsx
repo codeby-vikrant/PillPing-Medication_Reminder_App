@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { Link } from "expo-router";
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
@@ -14,6 +15,36 @@ import Svg, { Circle } from "react-native-svg";
 
 const width = Dimensions.get("window").width;
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const QUICK_ACTIONS = [
+  {
+    icon: "add-circle-outline" as const,
+    label: "Add \nMedication",
+    route: "/medications/add" as const,
+    color: "#2E7D32",
+    gradient: ["#66BB6A", "#43A047"] as [string, string],
+  },
+  {
+    icon: "calendar-outline" as const,
+    label: "Calendar \nView",
+    route: "/calendar" as const,
+    color: "#1976D2",
+    gradient: ["#2196F3", "#1976D2"] as [string, string],
+  },
+  {
+    icon: "time-outline" as const,
+    label: "History \nLog",
+    route: "/history" as const,
+    color: "#C2185B",
+    gradient: ["#E91E63", "#C2185B"] as [string, string],
+  },
+  {
+    icon: "medical-outline" as const,
+    label: "Refill \nTracker",
+    route: "/refills" as const,
+    color: "#E64A19",
+    gradient: ["#FF5722", "#E64A19"] as [string, string],
+  },
+];
 
 interface CircularProgressProps {
   progress: number;
@@ -38,7 +69,7 @@ function CircularProgress({
       duration: 1000,
       useNativeDriver: true,
     }).start();
-  }, [progress]);
+  }, [animationValue, progress]);
 
   const strokeDashoffset = animationValue.interpolate({
     inputRange: [0, 1],
@@ -100,6 +131,27 @@ export default function HomeScreen() {
           <CircularProgress progress={50} totalDoses={10} completedDoses={5} />
         </View>
       </LinearGradient>
+      <View>
+        <View>
+          <Text>Quick Actions</Text>
+          <View>
+            {QUICK_ACTIONS.map((action) => (
+              <Link href={"/"} key={action.label} asChild>
+                <TouchableOpacity>
+                  <LinearGradient colors={action.gradient}>
+                    <View>
+                      <View>
+                        <Ionicons name={action.icon} size={24} color="#fff" />
+                      </View>
+                      <Text>{action.label}</Text>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </Link>
+            ))}
+          </View>
+        </View>
+      </View>
     </ScrollView>
   );
 }
