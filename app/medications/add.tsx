@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Label } from "@react-navigation/elements";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import {
@@ -13,6 +14,7 @@ import {
   Platform,
   Alert,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const FREQUENCIES = [
   {
@@ -47,9 +49,57 @@ const FREQUENCIES = [
   },
 ];
 
+const DURATIONS = [
+  { id: "1", Label: "7 Days", value: 7 },
+  { id: "2", label: "14 Days", value: 14 },
+  { id: "3", label: "30 Days", value: 30 },
+  { id: "4", label: "90 Days", value: 90 },
+  { id: "5", label: "Ongoing", value: -1 },
+];
+
 export default function AddMedicationScreen() {
+  const [form, setForm] = useState({
+    name: "",
+    dosage: "",
+    frequency: "",
+    duration: "",
+    startDate: new Date(),
+    times: ["9:00"],
+    notes: "",
+    reminderEnabled: true,
+    refillReminder: false,
+    currentSupply: "",
+    refillAt: "",
+  });
+
   const renderFrequencyOptions = () => {
-    return <View></View>;
+    return (
+      <View>
+        {FREQUENCIES.map((freq) => (
+          <TouchableOpacity key={freq.id}>
+            <View>
+              <Ionicons name={freq.icon} size={24} />
+              <Text>{freq.label}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
+
+  const renderDurationOptions = () => {
+    return (
+      <View>
+        {DURATIONS.map((dur) => (
+          <TouchableOpacity key={dur.id}>
+            <View>
+              <Text>{dur.value > 0 ? dur.value : "∞"}</Text>
+              <Text>{dur.label}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
   };
 
   return (
@@ -82,6 +132,25 @@ export default function AddMedicationScreen() {
             </View>
             <View>
               <Text>How Often?</Text>
+              {renderFrequencyOptions()}
+              <Text>For How Long?</Text>
+              {renderDurationOptions()}
+              <TouchableOpacity>
+                <View>
+                  <Ionicons name="calendar" size={20} color={"#0077b6"} />
+                </View>
+                <Text>Starts {}</Text>
+              </TouchableOpacity>
+              <DateTimePicker mode="date" value={form.startDate} />
+              <DateTimePicker
+                mode="time"
+                value={(() => {
+                  const [hours, minutes] = form.times[0].split(":").map(Number);
+                  const date = new Date();
+                  date.setHours(hours, minutes, 0, 0);
+                  return date;
+                })()}
+              />
             </View>
           </View>
         </ScrollView>
