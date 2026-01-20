@@ -103,20 +103,25 @@ export default function AddMedicationScreen() {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <LinearGradient
         colors={["#0077b6", "#90e0ef"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
+        style={styles.headerGradient}
       />
-      <View>
-        <View>
-          <TouchableOpacity>
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton}>
             <Ionicons name="chevron-back" size={28} color={"#0077b6"} />
           </TouchableOpacity>
-          <Text>New Medication</Text>
+          <Text style={styles.headerTitle}>New Medication</Text>
         </View>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.formContentContainer}
+        >
           <View>
             <View>
               <TextInput
@@ -206,3 +211,50 @@ export default function AddMedicationScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f8f9fa",
+  },
+  headerGradient: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: Platform.OS === "ios" ? 140 : 120,
+  },
+  content: {
+    flex: 1,
+    paddingTop: Platform.OS === "ios" ? 50 : 30,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    zIndex: 1,
+  },
+  backButton: {
+    width: 35,
+    height: 35,
+    borderRadius: 20,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#fff",
+    marginLeft: 15,
+  },
+  formContentContainer: {
+    padding: 20,
+  },
+});
