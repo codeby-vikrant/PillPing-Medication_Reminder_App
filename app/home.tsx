@@ -363,6 +363,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   emptyState: {
+    alignItems: "center",
     padding: 30,
     backgroundColor: "#fff",
     borderRadius: 16,
