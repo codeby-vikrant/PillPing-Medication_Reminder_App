@@ -157,6 +157,67 @@ export default function HomeScreen() {
           </View>
         </View>
       </View>
+      <View style={{ paddingHorizontal: 20 }}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>{"Today's Schedule"}</Text>
+          <Link href="/calendar" asChild>
+            <TouchableOpacity>
+              <Text style={styles.seeAllButton}>See All</Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
+        {true ? (
+          <View style={styles.emptyState}>
+            <Ionicons name="medical-outline" size={48} color="#ccc" />
+            <Text style={styles.emptyStateText}>
+              No Medications Scheduled For Today.
+            </Text>
+            <Link href="/medications/add">
+              <TouchableOpacity style={styles.addMedicationsButton}>
+                <Text style={styles.addMedicationsButtonText}>
+                  Add Medications
+                </Text>
+              </TouchableOpacity>
+            </Link>
+          </View>
+        ) : (
+          [].map((medications) => {
+            // const taken
+            return (
+              <View style={styles.doseCard}>
+                <View
+                  style={[
+                    styles.doseBadge,
+                    // { backgroundColor: medications.color },
+                  ]}
+                >
+                  <Ionicons name="medical" size={24} />
+                </View>
+                <View style={styles.doseInfo}>
+                  <View>
+                    <Text style={styles.medicineName}>name</Text>
+                    <Text style={styles.dosageInfo}>dosage</Text>
+                  </View>
+                  <View style={styles.doseTime}>
+                    <Ionicons name="time-outline" size={16} color="#ccc" />
+                    <Text style={styles.timeText}>time</Text>
+                  </View>
+                </View>
+                {true ? (
+                  <View style={styles.takeDoseButton}>
+                    <Ionicons name="checkmark-circle-outline" size={24} />
+                    <Text style={styles.takeDoseText}>Taken</Text>
+                  </View>
+                ) : (
+                  <TouchableOpacity style={styles.takeDoseButton}>
+                    <Text style={styles.takeDoseText}>Take</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            );
+          })
+        )}
+      </View>
     </ScrollView>
   );
 }
@@ -290,5 +351,93 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
     marginTop: 8,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  seeAllButton: {
+    color: "#0077b6",
+    fontWeight: "600",
+  },
+  emptyState: {
+    padding: 30,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    marginTop: 10,
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: "#666",
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  addMedicationsButton: {
+    backgroundColor: "#0077b6",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+  addMedicationsButtonText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+  doseCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  doseBadge: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+  },
+  doseInfo: {
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  medicineName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 4,
+  },
+  dosageInfo: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 4,
+  },
+  doseTime: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  timeText: {
+    marginLeft: 5,
+    color: "#666",
+    fontSize: 14,
+  },
+  takeDoseButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 15,
+    marginLeft: 10,
+  },
+  takeDoseText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 14,
   },
 });
