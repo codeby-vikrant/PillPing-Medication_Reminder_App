@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Label } from "@react-navigation/elements";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import {
@@ -122,11 +121,16 @@ export default function AddMedicationScreen() {
           style={{ flex: 1 }}
           contentContainerStyle={styles.formContentContainer}
         >
-          <View>
-            <View>
+          <View style={styles.section}>
+            <View style={styles.inputContainer}>
               <TextInput
                 placeholder="Medication Name"
                 placeholderTextColor={"#999"}
+                style={[styles.mainInput, styles.inputError]}
+                value={form.name}
+                onChangeText={(text) => {
+                  setForm({ ...form, name: text });
+                }}
               />
             </View>
             <View>
@@ -256,5 +260,41 @@ const styles = StyleSheet.create({
   },
   formContentContainer: {
     padding: 20,
+  },
+  section: {
+    marginBottom: 25,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1a1a1a",
+    marginBottom: 15,
+    marginTop: 10,
+  },
+  mainInput: {
+    fontSize: 20,
+    color: "#333",
+    padding: 15,
+  },
+  inputContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  inputError: {
+    borderColor: "#FF5252",
+  },
+  errorText: {
+    color: "#FF5252",
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 12,
   },
 });
