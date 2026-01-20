@@ -153,7 +153,55 @@ export default function AddMedicationScreen() {
               />
             </View>
           </View>
+          <View>
+            <View>
+              <View>
+                <View>
+                  <View>
+                    <Ionicons name="notifications" color={"#0077b6"} />
+                  </View>
+                  <View>
+                    <Text>Reminders</Text>
+                    <Text>
+                      {"Get Notified When It's Time To Take Your Medication"}
+                    </Text>
+                  </View>
+                </View>
+                <Switch
+                  thumbColor={"#fff"}
+                  trackColor={{ false: "#ddd", true: "#0077b6" }}
+                />
+              </View>
+            </View>
+          </View>
+          <View>
+            <View>
+              <TextInput
+                placeholder="Add Notes Or Special Instructions..."
+                placeholderTextColor={"#999"}
+              />
+            </View>
+          </View>
         </ScrollView>
+        <View>
+          <TouchableOpacity>
+            <LinearGradient
+              colors={["#0077b6", "#90e0ef"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 0 }}
+            >
+              <Text>
+                Add Medications
+                {
+                  // isSubmitting ? "Adding" : "Add Medications"
+                }
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text>Cancel</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
