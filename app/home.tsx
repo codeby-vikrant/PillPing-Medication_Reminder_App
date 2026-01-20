@@ -131,19 +131,24 @@ export default function HomeScreen() {
           <CircularProgress progress={50} totalDoses={10} completedDoses={5} />
         </View>
       </LinearGradient>
-      <View>
-        <View>
-          <Text>Quick Actions</Text>
-          <View>
+      <View style={styles.content}>
+        <View style={styles.quickActionsContainer}>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <View style={styles.quickActionsGrid}>
             {QUICK_ACTIONS.map((action) => (
               <Link href={"/"} key={action.label} asChild>
-                <TouchableOpacity>
-                  <LinearGradient colors={action.gradient}>
-                    <View>
-                      <View>
+                <TouchableOpacity style={styles.quickActionsButton}>
+                  <LinearGradient
+                    colors={action.gradient}
+                    style={styles.quickActionsGradient}
+                  >
+                    <View style={styles.quickActionsContent}>
+                      <View style={styles.quickActionsIcons}>
                         <Ionicons name={action.icon} size={24} color="#fff" />
                       </View>
-                      <Text>{action.label}</Text>
+                      <Text style={styles.quickActionsLabel}>
+                        {action.label}
+                      </Text>
                     </View>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -241,5 +246,49 @@ const styles = StyleSheet.create({
   },
   progressRing: {
     transform: [{ rotate: "-90deg" }],
+  },
+  quickActionsContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 25,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#1a1a1a",
+    marginBottom: 5,
+  },
+  quickActionsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+    marginTop: 15,
+  },
+  quickActionsButton: {
+    width: (width - 52) / 2,
+    height: 110,
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  quickActionsGradient: {
+    flex: 1,
+    padding: 15,
+  },
+  quickActionsContent: {
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  quickActionsIcons: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  quickActionsLabel: {
+    fontSize: 14,
+    color: "#fff",
+    fontWeight: "600",
+    marginTop: 8,
   },
 });
