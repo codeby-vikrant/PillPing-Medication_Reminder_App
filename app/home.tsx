@@ -137,7 +137,7 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.quickActionsGrid}>
             {QUICK_ACTIONS.map((action) => (
-              <Link href={"/"} key={action.label} asChild>
+              <Link href={"/medications/add"} key={action.label} asChild>
                 <TouchableOpacity style={styles.quickActionsButton}>
                   <LinearGradient
                     colors={action.gradient}
@@ -219,7 +219,7 @@ export default function HomeScreen() {
           })
         )}
       </View>
-      <Modal visible={true} transparent={true} animationType="slide">
+      <Modal visible={false} transparent={true} animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Notification</Text>
