@@ -101,6 +101,8 @@ export default function AddMedicationScreen() {
     );
   };
 
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -126,12 +128,18 @@ export default function AddMedicationScreen() {
               <TextInput
                 placeholder="Medication Name"
                 placeholderTextColor={"#999"}
-                style={[styles.mainInput, styles.inputError]}
+                style={[styles.mainInput, errors.name && styles.inputError]}
                 value={form.name}
                 onChangeText={(text) => {
                   setForm({ ...form, name: text });
+                  if (errors.name) {
+                    setErrors({ ...errors, name: "" });
+                  }
                 }}
               />
+              {errors.name && (
+                <Text style={styles.errorText}>{errors.name}</Text>
+              )}
             </View>
             <View>
               <TextInput
