@@ -75,6 +75,8 @@ export default function AddMedicationScreen() {
 
   const [selectedFrequency, setSelectedFrequency] = useState("");
   const [selectedDuration, setSelectedDuration] = useState("");
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const renderFrequencyOptions = () => {
     return (
@@ -215,22 +217,57 @@ export default function AddMedicationScreen() {
                 <Text style={styles.errorText}>{errors.duration}</Text>
               )}
               {renderDurationOptions()}
-              <TouchableOpacity>
-                <View>
+              <TouchableOpacity
+                style={styles.dateButton}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <View style={styles.dateIconContainer}>
                   <Ionicons name="calendar" size={20} color={"#0077b6"} />
                 </View>
-                <Text>Starts {}</Text>
+                <Text style={styles.dateButtonText}>
+                  Starts {form.startDate.toLocaleDateString()}
+                </Text>
+                <Ionicons name="chevron-forward" size={20} color={"#666"} />
               </TouchableOpacity>
-              <DateTimePicker mode="date" value={form.startDate} />
-              <DateTimePicker
-                mode="time"
-                value={(() => {
-                  const [hours, minutes] = form.times[0].split(":").map(Number);
-                  const date = new Date();
-                  date.setHours(hours, minutes, 0, 0);
-                  return date;
-                })()}
-              />
+              {showDatePicker && (
+                <DateTimePicker
+                  mode="date"
+                  value={form.startDate}
+                  onChange={(event, date) => {
+                    setShowDatePicker(false);
+                    if (date) setForm({ ...form, startDate: date });
+                  }}
+                />
+              )}
+              {showTimePicker && (
+                <DateTimePicker
+                  mode="time"
+                  value={(() => {
+                    const [hours, minutes] = form.times[0]
+                      .split(":")
+                      .map(Number);
+                    const date = new Date();
+                    date.setHours(hours, minutes, 0, 0);
+                    return date;
+                  })()}
+                  onChange={(event, date) => {
+                    setShowTimePicker(false);
+                    if (date) {
+                      const newTime = date.toLocaleTimeString("default", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                      });
+                      setForm((prev) => ({
+                        ...prev,
+                        times: prev.times.map((t, i) =>
+                          i === 0 ? newTime : t,
+                        ),
+                      }));
+                    }
+                  }}
+                />
+              )}
             </View>
           </View>
           <View>
@@ -421,5 +458,34 @@ const styles = StyleSheet.create({
   },
   selectedDurationNumber: {
     color: "#fff",
+  },
+  dateButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 15,
+    marginTop: 15,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  dateIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#f5f5f5",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  dateButtonText: {
+    flex: 1,
+    fontSize: 16,
+    color: "#333",
   },
 });
