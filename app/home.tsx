@@ -10,6 +10,7 @@ import {
   Animated,
   Dimensions,
   StyleSheet,
+  Modal,
 } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
@@ -218,6 +219,28 @@ export default function HomeScreen() {
           })
         )}
       </View>
+      <Modal visible={true} transparent={true} animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Notification</Text>
+            <TouchableOpacity style={styles.closeButton}> 
+              <Ionicons name="close" size={24} color="#333" />
+            </TouchableOpacity>
+          </View>
+          {[].map((medication) => (
+            <View style={styles.notificationItem}>
+              <View style={styles.notificationIcon}>
+                <Ionicons name="medical" size={24} />
+              </View>
+              <View style={styles.notificationContent}>
+                <Text style={styles.notificationTitle}>medication name</Text>
+                <Text style={styles.notificationMessage}>medication dosage</Text>
+                <Text style={styles.notificationTime}>medication time</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -440,5 +463,65 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
     fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    maxHeight: "80%",
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  closeButton: {
+    padding: 5,
+  },
+  notificationItem: {
+    flexDirection: "row",
+    padding: 15,
+    borderRadius: 12,
+    backgroundColor: "#f5f5f5",
+    marginBottom: 10,
+  },
+  notificationIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#E8F5E9",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+  },
+  notificationContent: {
+    flex: 1,
+  },
+  notificationTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 4,
+  },
+  notificationMessage: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 4,
+  },
+  notificationTime: {
+    fontSize: 12,
+    color: "#999",
   },
 });
