@@ -141,16 +141,33 @@ export default function AddMedicationScreen() {
                 <Text style={styles.errorText}>{errors.name}</Text>
               )}
             </View>
-            <View>
+            <View style={styles.inputContainer}>
               <TextInput
                 placeholder="Dosage (e.g., 500mg)"
                 placeholderTextColor={"#999"}
+                style={[styles.mainInput, errors.name && styles.inputError]}
+                value={form.dosage}
+                onChangeText={(text) => {
+                  setForm({ ...form, dosage: text });
+                  if (errors.dosage) {
+                    setErrors({ ...errors, dosage: "" });
+                  }
+                }}
               />
+              {errors.dosage && (
+                <Text style={styles.errorText}>{errors.dosage}</Text>
+              )}
             </View>
-            <View>
-              <Text>How Often?</Text>
+            <View style={styles.container}>
+              <Text style={styles.sectionTitle}>How Often?</Text>
+              {errors.frequency && (
+                <Text style={styles.errorText}>{errors.frequency}</Text>
+              )}
               {renderFrequencyOptions()}
-              <Text>For How Long?</Text>
+              <Text style={styles.sectionTitle}>For How Long?</Text>
+              {errors.duration && (
+                <Text style={styles.errorText}>{errors.duration}</Text>
+              )}
               {renderDurationOptions()}
               <TouchableOpacity>
                 <View>
