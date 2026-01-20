@@ -15,6 +15,8 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
+const { width } = Dimensions.get("window");
+
 const FREQUENCIES = [
   {
     id: "1",
@@ -49,7 +51,7 @@ const FREQUENCIES = [
 ];
 
 const DURATIONS = [
-  { id: "1", Label: "7 Days", value: 7 },
+  { id: "1", label: "7 Days", value: 7 },
   { id: "2", label: "14 Days", value: 14 },
   { id: "3", label: "30 Days", value: 30 },
   { id: "4", label: "90 Days", value: 90 },
@@ -71,14 +73,40 @@ export default function AddMedicationScreen() {
     refillAt: "",
   });
 
+  const [selectedFrequency, setSelectedFrequency] = useState("");
+  const [selectedDuration, setSelectedDuration] = useState("");
+
   const renderFrequencyOptions = () => {
     return (
-      <View>
+      <View style={styles.optionsGrid}>
         {FREQUENCIES.map((freq) => (
-          <TouchableOpacity key={freq.id}>
-            <View>
-              <Ionicons name={freq.icon} size={24} />
-              <Text>{freq.label}</Text>
+          <TouchableOpacity
+            key={freq.id}
+            style={[
+              styles.optionsCard,
+              selectedFrequency === freq.label && styles.selectedOptionsCard,
+            ]}
+          >
+            <View
+              style={[
+                styles.optionsIcon,
+                selectedFrequency === freq.label && styles.selectedOptionsIcon,
+              ]}
+            >
+              <Ionicons
+                name={freq.icon}
+                size={24}
+                color={selectedFrequency === freq.label ? "#fff" : "#666"}
+              />
+              <Text
+                style={[
+                  styles.optionsLabel,
+                  selectedFrequency === freq.label &&
+                    styles.selectedOptionsLabel,
+                ]}
+              >
+                {freq.label}
+              </Text>
             </View>
           </TouchableOpacity>
         ))}
@@ -88,13 +116,31 @@ export default function AddMedicationScreen() {
 
   const renderDurationOptions = () => {
     return (
-      <View>
+      <View style={styles.optionsGrid}>
         {DURATIONS.map((dur) => (
-          <TouchableOpacity key={dur.id}>
-            <View>
-              <Text>{dur.value > 0 ? dur.value : "∞"}</Text>
-              <Text>{dur.label}</Text>
-            </View>
+          <TouchableOpacity
+            key={dur.id}
+            style={[
+              styles.optionsCard,
+              selectedDuration === dur.label && styles.selectedOptionsCard,
+            ]}
+          >
+            <Text
+              style={[
+                styles.durationNumber,
+                selectedDuration === dur.label && styles.selectedDurationNumber,
+              ]}
+            >
+              {dur.value > 0 ? dur.value : "∞"}
+            </Text>
+            <Text
+              style={[
+                styles.optionsLabel,
+                selectedDuration === dur.label && styles.selectedOptionsLabel,
+              ]}
+            >
+              {dur.label}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -321,5 +367,59 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
     marginLeft: 12,
+  },
+  optionsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginHorizontal: -5,
+  },
+  optionsCard: {
+    width: (width - 60) / 2,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 15,
+    margin: 5,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  selectedOptionsCard: {
+    backgroundColor: "#0077b6",
+    borderColor: "#0077b6",
+  },
+  optionsIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#f5f5f5",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  selectedOptionsIcon: {
+    backgroundColor: "rgba(255,255,255,0.2)",
+  },
+  optionsLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333",
+    textAlign: "center",
+  },
+  selectedOptionsLabel: {
+    color: "#fff",
+  },
+  durationNumber: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#0077b6",
+    marginBottom: 5,
+  },
+  selectedDurationNumber: {
+    color: "#fff",
   },
 });
