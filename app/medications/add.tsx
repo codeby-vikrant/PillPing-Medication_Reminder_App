@@ -14,7 +14,7 @@ import {
   Alert,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { router, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
