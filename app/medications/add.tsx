@@ -206,7 +206,17 @@ export default function AddMedicationScreen() {
         [{ text: "OK", onPress: () => router.back() }],
         { cancelable: false },
       );
-    } catch (error) {}
+    } catch (error) {
+      console.error("Save Error", error);
+      Alert.alert(
+        "Error",
+        "Failed To Save Medication. Please Try Again",
+        [{ text: "OK" }],
+        { cancelable: false },
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
