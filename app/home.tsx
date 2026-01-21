@@ -267,7 +267,7 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.quickActionsGrid}>
             {QUICK_ACTIONS.map((action) => (
-              <Link href={"/medications/add"} key={action.label} asChild>
+              <Link href={action.route} key={action.label} asChild>
                 <TouchableOpacity style={styles.quickActionsButton}>
                   <LinearGradient
                     colors={action.gradient}
