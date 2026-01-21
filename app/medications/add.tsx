@@ -239,6 +239,35 @@ export default function AddMedicationScreen() {
                   }}
                 />
               )}
+
+              {form.frequency && form.frequency !== "As Needed" && (
+                <View>
+                  <Text>Medication Times</Text>
+                  {form.times.map((time, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => {
+                        setShowTimePicker(true);
+                      }}
+                    >
+                      <View>
+                        <Ionicons
+                          name="time-outline"
+                          size={20}
+                          color={"#0077b6"}
+                        />
+                      </View>
+                      <Text>{time}</Text>
+                      <Ionicons
+                        name="chevron-forward"
+                        size={20}
+                        color={"#666"}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+
               {showTimePicker && (
                 <DateTimePicker
                   mode="time"
