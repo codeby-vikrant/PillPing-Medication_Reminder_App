@@ -45,3 +45,66 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
         return null;
     }
 }
+
+export async function scheduleMedicationReminder(
+    medication: Medication
+): Promise<string[] | undefined> {
+    if (!medication.reminderEnabled) return;
+
+    try {
+        const identifiers: string[] = [];
+
+        for (const time of medication.times) {
+            const [hours, minutes] = time.split(":").map(Number);
+
+            const id = await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Medication Reminder",
+                    body: `Time To Take ${medication.name} (${medication.dosage})`,
+                    data: { medicationId: medication.id },
+                },
+                trigger: {
+                    type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
+                    hour: hours,
+                    minute: minutes,
+                    repeats: true,
+                },
+            });
+
+            identifiers.push(id);
+        }
+
+        return identifiers;
+    } catch (error) {
+        console.error("Error Scheduling Medication Reminder", error);
+        return undefined;
+    }
+}
+
+export async function cancelMedicationReminders(
+    medicationId: string
+): Promise<void> {
+    try {
+        const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
+
+        for (const notification of scheduledNotifications) {
+            const data = notification.content.data as {
+                medicationId?: string;
+            } | null;
+            if (data?.medicationId === medicationId) {
+                await Notifications.cancelScheduledNotificationAsync(notification.identifier);
+            }
+        }
+    } catch (error) {
+        console.error("Error Cancelling Reminder", error);
+    }
+}
+
+export async function updateMedicationReminders(medication: Medication): Promise<void> {
+    try {
+        await cancelMedicationReminders(medication.id);
+        await scheduleMedicationReminder(medication);
+    } catch (error) {
+        console.error("Error Updating Medication Reminders", error)
+    }
+}
