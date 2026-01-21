@@ -1,6 +1,12 @@
+import {
+  DoseHistory,
+  getMedication,
+  getTodaysDoses,
+  Medication,
+} from "@/utils/storage";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
@@ -112,6 +118,50 @@ function CircularProgress({
 }
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const [todaysMedications, setTodaysMedications] = useState<Medication[]>([]);
+  const [completedDoses, setCompletedDoses] = useState(0);
+  const [doseHistory, setDoseHistory] = useState<DoseHistory[]>([]);
+  const [medications, setMedications] = useState<Medication[]>([]);
+
+  const loadMedications = useCallback(async () => {
+    try {
+      const [allMedications, todaysDoses] = await Promise.all([
+        getMedication(),
+        getTodaysDoses(),
+      ]);
+
+      setDoseHistory(todaysDoses);
+      setMedications(allMedications);
+
+      const today = new Date();
+
+      const todaysMeds = allMedications.filter((med) => {
+        const startDate = new Date(med.startDate);
+        const durationsDays = parseInt(med.duration.split(" ")[0]);
+
+        if (
+          durationsDays === -1 ||
+          (today >= startDate &&
+            today <=
+              new Date(
+                startDate.getTime() + durationsDays * 24 * 60 * 60 * 1000,
+              ))
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      setTodaysMedications(todaysMeds);
+
+      const completed = todaysDoses.filter((dose) => dose.taken).length;
+      setCompletedDoses(completed);
+    } catch (error) {
+      console.error("Error Loading Medications", error);
+    }
+  }, []);
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <LinearGradient colors={["#0077b6", "#90e0ef"]} style={styles.header}>
@@ -223,7 +273,7 @@ export default function HomeScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Notification</Text>
-            <TouchableOpacity style={styles.closeButton}> 
+            <TouchableOpacity style={styles.closeButton}>
               <Ionicons name="close" size={24} color="#333" />
             </TouchableOpacity>
           </View>
@@ -234,7 +284,9 @@ export default function HomeScreen() {
               </View>
               <View style={styles.notificationContent}>
                 <Text style={styles.notificationTitle}>medication name</Text>
-                <Text style={styles.notificationMessage}>medication dosage</Text>
+                <Text style={styles.notificationMessage}>
+                  medication dosage
+                </Text>
                 <Text style={styles.notificationTime}>medication time</Text>
               </View>
             </View>
