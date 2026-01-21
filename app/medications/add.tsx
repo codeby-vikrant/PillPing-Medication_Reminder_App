@@ -185,7 +185,7 @@ export default function AddMedicationScreen() {
       const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
       const medicationData = {
-        id: Math.random().toString(36).substr(2, 9),
+        id: Math.random().toString(36).substring(2, 9),
         ...form,
         currentSupply: form.currentSupply ? Number(form.currentSupply) : 0,
         totalSupply: form.currentSupply ? Number(form.currentSupply) : 0,
@@ -193,6 +193,19 @@ export default function AddMedicationScreen() {
         startDate: form.startDate.toISOString(),
         color: randomColor,
       };
+
+      await AddMedicationScreen(medicationData);
+
+      if (medicationData.reminderEnabled) {
+        await scheduleMedicationReminder(medicationData);
+      }
+
+      Alert.alert(
+        "Success",
+        "Medication Added Successfully",
+        [{ text: "OK", onPress: () => router.back() }],
+        { cancelable: false },
+      );
     } catch (error) {}
   };
 
