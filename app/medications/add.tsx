@@ -14,6 +14,7 @@ import {
   Alert,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { router, useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -77,6 +78,9 @@ export default function AddMedicationScreen() {
   const [selectedDuration, setSelectedDuration] = useState("");
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const router = useRouter();
 
   const renderFrequencyOptions = () => {
     return (
@@ -300,53 +304,75 @@ export default function AddMedicationScreen() {
               )}
             </View>
           </View>
-          <View>
-            <View>
-              <View>
-                <View>
-                  <View>
-                    <Ionicons name="notifications" color={"#0077b6"} />
+          <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.switchRow}>
+                <View style={styles.switchLabelContainer}>
+                  <View style={styles.iconContainer}>
+                    <Ionicons
+                      name="notifications"
+                      color={"#0077b6"}
+                      size={20}
+                    />
                   </View>
                   <View>
-                    <Text>Reminders</Text>
-                    <Text>
-                      {"Get Notified When It's Time To Take Your Medication"}
+                    <Text style={styles.switchLabel}>Reminders</Text>
+                    <Text style={styles.switchSubLabel}>
+                      {"Get Notified When It's Medication Time"}
                     </Text>
                   </View>
                 </View>
                 <Switch
                   thumbColor={"#fff"}
                   trackColor={{ false: "#ddd", true: "#0077b6" }}
+                  value={form.reminderEnabled}
+                  onValueChange={(value) =>
+                    setForm({ ...form, reminderEnabled: value })
+                  }
                 />
               </View>
             </View>
           </View>
-          <View>
-            <View>
+          <View style={styles.section}>
+            <View style={styles.textAreaContainer}>
               <TextInput
                 placeholder="Add Notes Or Special Instructions..."
                 placeholderTextColor={"#999"}
+                style={styles.textArea}
+                value={form.notes}
+                onChangeText={(text) => setForm({ ...form, notes: text })}
+                multiline
+                numberOfLines={4}
+                textAlignVertical="top"
               />
             </View>
           </View>
         </ScrollView>
-        <View>
-          <TouchableOpacity>
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={[
+              styles.saveButton,
+              isSubmitting && styles.saveButtonDisabled,
+            ]}
+          >
             <LinearGradient
               colors={["#0077b6", "#90e0ef"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 0 }}
+              style={styles.saveButtonGradient}
             >
-              <Text>
+              <Text style={styles.saveButtonText}>
                 Add Medications
-                {
-                  // isSubmitting ? "Adding" : "Add Medications"
-                }
+                {isSubmitting ? "Adding" : "Add Medications"}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Text>Cancel</Text>
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => router.back()}
+            disabled={isSubmitting}
+          >
+            <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -555,5 +581,101 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: "#333",
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  switchRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  switchLabelContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#f5f5f5",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+  },
+  switchLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+  },
+  switchSubLabel: {
+    fontSize: 13,
+    color: "#333",
+    marginTop: 2,
+  },
+  textAreaContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  textArea: {
+    height: 100,
+    padding: 15,
+    fontSize: 16,
+    color: "#333",
+  },
+  footer: {
+    padding: 20,
+    backgroundColor: "#fff",
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0",
+  },
+  saveButton: {
+    borderRadius: 16,
+    overflow: "hidden",
+    marginBottom: 12,
+  },
+  saveButtonDisabled: {
+    opacity: 0.7,
+  },
+  saveButtonGradient: {
+    paddingVertical: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  saveButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  cancelButton: {
+    paddingVertical: 15,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  cancelButtonText: {
+    color: "#666",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
