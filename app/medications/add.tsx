@@ -15,6 +15,8 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
+import { addMedication } from "@/utils/storage";
+import { scheduleMedicationReminder } from "@/utils/notifications";
 
 const { width } = Dimensions.get("window");
 
@@ -93,6 +95,10 @@ export default function AddMedicationScreen() {
               styles.optionsCard,
               selectedFrequency === freq.label && styles.selectedOptionsCard,
             ]}
+            onPress={() => {
+              setSelectedFrequency(freq.label);
+              setForm({ ...form, frequency: freq.label });
+            }}
           >
             <View
               style={[
@@ -131,6 +137,10 @@ export default function AddMedicationScreen() {
               styles.optionsCard,
               selectedDuration === dur.label && styles.selectedOptionsCard,
             ]}
+            onPress={() => {
+              setSelectedDuration(dur.label);
+              setForm({ ...form, duration: dur.label });
+            }}
           >
             <Text
               style={[
@@ -418,15 +428,15 @@ export default function AddMedicationScreen() {
               styles.saveButton,
               isSubmitting && styles.saveButtonDisabled,
             ]}
+            onPress={() => handleSave()}
           >
             <LinearGradient
-              colors={["#0077b6", "#90e0ef"]}
+              colors={["#90e0ef", "#0077b6"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 0 }}
               style={styles.saveButtonGradient}
             >
               <Text style={styles.saveButtonText}>
-                Add Medications
                 {isSubmitting ? "Adding" : "Add Medications"}
               </Text>
             </LinearGradient>
