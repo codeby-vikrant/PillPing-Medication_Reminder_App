@@ -194,7 +194,7 @@ export default function AddMedicationScreen() {
         color: randomColor,
       };
 
-      await AddMedicationScreen(medicationData);
+      await addMedication(medicationData);
 
       if (medicationData.reminderEnabled) {
         await scheduleMedicationReminder(medicationData);
