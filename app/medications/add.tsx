@@ -79,6 +79,7 @@ export default function AddMedicationScreen() {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const router = useRouter();
 
@@ -153,7 +154,47 @@ export default function AddMedicationScreen() {
     );
   };
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const validateForm = () => {
+    const newError: { [key: string]: string } = {};
+    if (!form.name.trim()) {
+      newError.name = "Medication Name Is Required";
+    }
+    if (!form.dosage.trim()) {
+      newError.name = "Dosage Is Required";
+    }
+    if (!form.frequency) {
+      newError.frequency = "Frequency Is Required";
+    }
+    if (!form.duration) {
+      newError.duration = "Duration Is Required";
+    }
+    setErrors(newError);
+    return Object.keys(newError).length === 0;
+  };
+
+  const handleSave = async () => {
+    try {
+      if (!validateForm()) {
+        Alert.alert("Error, Please Fill In All Required Fields Correctly");
+        return;
+      }
+      if (isSubmitting) return;
+      setIsSubmitting(true);
+
+      const colors = ["#4CAF50", "#2196F3", "#FF9800", "#E91E63", "#9C27B0"];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+      const medicationData = {
+        id: Math.random().toString(36).substr(2, 9),
+        ...form,
+        currentSupply: form.currentSupply ? Number(form.currentSupply) : 0,
+        totalSupply: form.currentSupply ? Number(form.currentSupply) : 0,
+        refillAt: form.refillAt ? Number(form.refillAt) : 0,
+        startDate: form.startDate.toISOString(),
+        color: randomColor,
+      };
+    } catch (error) {}
+  };
 
   return (
     <View style={styles.container}>
