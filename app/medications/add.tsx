@@ -241,23 +241,24 @@ export default function AddMedicationScreen() {
               )}
 
               {form.frequency && form.frequency !== "As Needed" && (
-                <View>
-                  <Text>Medication Times</Text>
+                <View style={styles.timesContainer}>
+                  <Text style={styles.timesTitle}>Medication Times</Text>
                   {form.times.map((time, index) => (
                     <TouchableOpacity
                       key={index}
+                      style={styles.timesButton}
                       onPress={() => {
                         setShowTimePicker(true);
                       }}
                     >
-                      <View>
+                      <View style={styles.timesIconContainer}>
                         <Ionicons
                           name="time-outline"
                           size={20}
                           color={"#0077b6"}
                         />
                       </View>
-                      <Text>{time}</Text>
+                      <Text style={styles.timesButtonText}>{time}</Text>
                       <Ionicons
                         name="chevron-forward"
                         size={20}
@@ -513,6 +514,44 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   dateButtonText: {
+    flex: 1,
+    fontSize: 16,
+    color: "#333",
+  },
+  timesContainer: {
+    marginTop: 20,
+  },
+  timesTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 10,
+  },
+  timesButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 15,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  timesIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#f5f5f5",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  timesButtonText: {
     flex: 1,
     fontSize: 16,
     color: "#333",
