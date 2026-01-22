@@ -23,7 +23,27 @@ export default function RootLayout() {
             title: "",
           }}
         />
+        <Stack.Screen
+          name="/refills/index"
+          options={{ headerShown: false, headerBackTitle: "", title: "" }}
+        />
       </Stack>
+      <Stack.Screen
+        name="/calendar/index"
+        options={{
+          headerShown: false,
+          headerBackTitle: "",
+          title: "",
+        }}
+      />
+      <Stack.Screen
+        name="/history/index"
+        options={{
+          headerShown: false,
+          headerBackTitle: "",
+          title: "",
+        }}
+      />
     </>
   );
 }
