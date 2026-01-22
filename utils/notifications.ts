@@ -124,7 +124,9 @@ export async function cancelMedicationReminders(
 export async function updateMedicationReminders(medication: Medication): Promise<void> {
     try {
         await cancelMedicationReminders(medication.id);
+
         await scheduleMedicationReminder(medication);
+        await scheduleRefillReminder(medication);
     } catch (error) {
         console.error("Error Updating Medication Reminders", error)
     }
