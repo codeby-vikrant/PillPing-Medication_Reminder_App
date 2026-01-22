@@ -115,9 +115,14 @@ export default function CalendarScreen() {
         (dose) => dose.medicationId === medication.id && dose.taken,
       );
       return (
-        <View key={medication.id}>
-          <View />
-          <View>
+        <View key={medication.id} style={styles.medicationCard}>
+          <View
+            style={[
+              styles.medicationColor,
+              { backgroundColor: medication.color },
+            ]}
+          />
+          <View style={styles.medicationInfo}>
             <Text style={styles.medicationName}>{medication.name}</Text>
             <Text style={styles.medicationDosage}>{medication.dosage}</Text>
             <Text style={styles.medicationTime}>{medication.times[0]}</Text>
@@ -153,7 +158,7 @@ export default function CalendarScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.headerGradient}
-      ></LinearGradient>
+      />
       <View style={styles.content}>
         <View style={styles.header}>
           <TouchableOpacity
@@ -207,8 +212,8 @@ export default function CalendarScreen() {
               {day}
             </Text>
           ))}
+          {renderCalendar()}
         </View>
-        {renderCalendar()}
         <View style={styles.scheduleContainer}>
           <Text style={styles.scheduleTitle}>
             {selectedDate.toLocaleDateString("default", {
@@ -217,7 +222,9 @@ export default function CalendarScreen() {
               day: "numeric",
             })}
           </Text>
-          <ScrollView>{renderMedicationsForDate()}</ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {renderMedicationsForDate()}
+          </ScrollView>
         </View>
       </View>
     </View>
@@ -248,6 +255,8 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   backButton: {
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: "#fff",
     justifyContent: "center",
