@@ -109,7 +109,17 @@ export async function recordDose(medicationId: string, taken: boolean, timestamp
             taken
         };
         history.push(newDose);
+
         await AsyncStorage.setItem(DOSE_HISTORY_KEY, JSON.stringify(history));
+
+        if (taken) {
+            const medications = await getMedication();
+            const medication = medications.find((med) => med.id === medicationId);
+            if (medication && medication.currentSupply > 0) {
+                medication.currentSupply -= 1;
+                await updateMedication(medication);
+            }
+        }
     } catch (error) {
         console.error("Error Recording Dose", error);
         throw error;
