@@ -49,6 +49,21 @@ export async function addMedication(medication: Medication): Promise<void> {
     }
 }
 
+export async function updateMedication(updateMedication: Medication): Promise<void> {
+    try {
+        const medications = await getMedication();
+        const index = medications.findIndex((med) => med.id === updateMedication.id);
+
+        if (index !== -1) {
+            medications[index] = updateMedication;
+            await AsyncStorage.setItem(MEDICATION_KEY, JSON.stringify(medications));
+        }
+    } catch (error) {
+        console.error("Error Updating Medications", error);
+        throw error;
+    }
+}
+
 export async function getDoseHistory(): Promise<DoseHistory[]> {
     try {
         const data = await AsyncStorage.getItem(DOSE_HISTORY_KEY);
