@@ -83,6 +83,7 @@ export default function CalendarScreen() {
             isToday && styles.today,
             hasDoses && styles.hasEvents,
           ]}
+          onPress={() => setSelectedDate(date)}
         >
           <Text style={[styles.dayText, isToday && styles.todayText]}>
             {day}
@@ -92,7 +93,11 @@ export default function CalendarScreen() {
       );
 
       if ((firstDay + day) % 7 === 0 || day === days) {
-        calendar.push(<View key={day}>{week}</View>);
+        calendar.push(
+          <View key={day} style={styles.calendarWeek}>
+            {week}
+          </View>,
+        );
         week = [];
       }
     }
