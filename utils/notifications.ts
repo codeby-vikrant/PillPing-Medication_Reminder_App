@@ -81,6 +81,27 @@ export async function scheduleMedicationReminder(
     }
 }
 
+export async function scheduleRefillReminder(medication: Medication): Promise<string | undefined> {
+    if (!medication.refillReminder) return;
+
+    try {
+        if (medication.currentSupply <= medication.refillAt) {
+            const identifier = await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Refill Reminder",
+                    body: `Your ${medication.name} Supply Is Running Low. Current Supply: ${medication.currentSupply}`,
+                    data: { medicationId: medication.id, type: "refill" },
+                },
+                trigger: null,
+            });
+            return identifier;
+        }
+    } catch (error) {
+        console.error("Error Scheduling Refill Reminder", error);
+        return undefined;
+    }
+}
+
 export async function cancelMedicationReminders(
     medicationId: string
 ): Promise<void> {
