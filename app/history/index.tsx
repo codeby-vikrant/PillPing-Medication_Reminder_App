@@ -12,6 +12,7 @@ import { useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import {
   Alert,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -273,4 +274,166 @@ export default function HistoryScreen() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f8f9fa",
+  },
+  headerGradient: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: Platform.OS === "ios" ? 140 : 120,
+  },
+  content: {
+    flex: 1,
+    paddingTop: Platform.OS === "ios" ? 50 : 30,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    zIndex: 1,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#fff",
+    marginLeft: 15,
+  },
+  filtersContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    backgroundColor: "#f8f9fa",
+    paddingTop: 10,
+  },
+  filtersScroll: {
+    paddingRight: 20,
+  },
+  filterButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "#fff",
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+  },
+  filterButtonActive: {
+    backgroundColor: "#0077b6",
+    borderColor: "#0077b6",
+  },
+  filterText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#666",
+  },
+  filterTextActive: {
+    color: "#fff",
+  },
+  historyContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    backgroundColor: "#f8f9fa",
+  },
+  dateGroup: {
+    marginBottom: 25,
+  },
+  dateHeader: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#666",
+    marginBottom: 12,
+  },
+  historyCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  medicationColor: {
+    width: 12,
+    height: 40,
+    borderRadius: 6,
+    marginRight: 16,
+  },
+  medicationInfo: {
+    flex: 1,
+  },
+  medicationName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 4,
+  },
+  medicationDosage: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 2,
+  },
+  timeText: {
+    fontSize: 14,
+    color: "#666",
+  },
+  statusContainer: {
+    alignItems: "flex-end",
+  },
+  statusBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  statusText: {
+    marginLeft: 4,
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  clearDataContainer: {
+    padding: 20,
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 40,
+  },
+  clearDataButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFEBEE",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#FFCDD2",
+  },
+  clearDataText: {
+    color: "#FF5252",
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
+  },
+});
