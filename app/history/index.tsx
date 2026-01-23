@@ -1,4 +1,5 @@
 import {
+  clearAllData,
   DoseHistory,
   getDoseHistory,
   getMedication,
@@ -7,6 +8,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
+import { Alert } from "react-native";
 
 type EnrinchedDoseHistory = DoseHistory & { medication?: Medication };
 
@@ -57,6 +59,42 @@ export default function HistoryScreen() {
 
     return Object.entries(grouped).sort(
       (a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime(),
+    );
+  };
+
+  const filteredHistory = history.filter((dose) => {
+    if (selectedFilter === "all") return true;
+    if (selectedFilter === "taken") return dose.taken;
+    if (selectedFilter === "missed") return !dose.taken;
+    return true;
+  });
+
+  const groupedHistory = groupHistoryByDate();
+
+  const handleClearAllData = () => {
+    Alert.alert(
+      "Clear All Data",
+      "Are You Sure You Want To Clear All Medications Data? This Action Cannot Be Undone.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Clear All",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await clearAllData();
+              await loadHistory();
+              Alert.alert("Success", "All Data Has Been Cleared Successfully");
+            } catch (error) {
+              console.error("Error Clearing Data", error);
+              Alert.alert("Error", "Failed To Clear Data. Please Try Again");
+            }
+          },
+        },
+      ],
     );
   };
 }
