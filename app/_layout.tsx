@@ -16,7 +16,7 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen
-          name="/medications/add"
+          name="medications/add"
           options={{
             headerShown: false,
             headerBackTitle: "",
@@ -24,26 +24,26 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="/refills/index"
+          name="refills/index"
           options={{ headerShown: false, headerBackTitle: "", title: "" }}
         />
+        <Stack.Screen
+          name="calendar/index"
+          options={{
+            headerShown: false,
+            headerBackTitle: "",
+            title: "",
+          }}
+        />
+        <Stack.Screen
+          name="history/index"
+          options={{
+            headerShown: false,
+            headerBackTitle: "",
+            title: "",
+          }}
+        />
       </Stack>
-      <Stack.Screen
-        name="/calendar/index"
-        options={{
-          headerShown: false,
-          headerBackTitle: "",
-          title: "",
-        }}
-      />
-      <Stack.Screen
-        name="/history/index"
-        options={{
-          headerShown: false,
-          headerBackTitle: "",
-          title: "",
-        }}
-      />
     </>
   );
 }
