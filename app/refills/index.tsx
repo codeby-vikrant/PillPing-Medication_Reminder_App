@@ -43,4 +43,31 @@ export default function RefillTrackerScreen() {
       Alert.alert("Error, Failed To Record Refill. Please Try Again");
     }
   };
+
+  const getSupplyStatus = (medication: Medication) => {
+    const percentage =
+      (medication.currentSupply / medication.totalSupply) * 100;
+
+    if (percentage <= medication.refillAt) {
+      return {
+        status: "Low",
+        color: "#F44336",
+        backgroundColor: "#FFEBEE",
+      };
+    } else if (percentage <= 50) {
+      return {
+        status: "Medium",
+        color: "#FF9800",
+        backgroundColor: "#FFF3E0",
+      };
+    } else {
+      return {
+        status: "Good",
+        color: "#4CAF50",
+        backgroundColor: "#E8F5E9",
+      };
+    }
+  };
+
+  
 }
