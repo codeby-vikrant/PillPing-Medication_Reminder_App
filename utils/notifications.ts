@@ -75,11 +75,10 @@ export async function scheduleMedicationReminder(
                     data: { medicationId: medication.id },
                 },
                 trigger: {
-                    type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
                     hour: hours,
                     minute: minutes,
                     repeats: true,
-                },
+                } as Notifications.NotificationTriggerInput
             });
 
             identifiers.push(id);
