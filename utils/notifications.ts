@@ -1,4 +1,5 @@
 import * as Notifications from 'expo-notifications'
+import * as Device from 'expo-device'
 import { Platform } from 'react-native'
 import { Medication } from './storage'
 
@@ -12,8 +13,22 @@ Notifications.setNotificationHandler({
     }),
 });
 
+export async function setupAndroidNotificationChannel() {
+    if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: "#0077b6",
+        });
+    }
+}
+
 export async function registerForPushNotificationsAsync(): Promise<string | null> {
-    let token: string | null = null;
+    if (!Device.isDevice) {
+        console.log('Push notifications require a physical device');
+        return null;
+    }
 
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
@@ -24,24 +39,20 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
     }
 
     if (finalStatus !== 'granted') {
+        console.log('Notification permission not granted');
         return null;
     }
 
     try {
-        const response = await Notifications.getExpoPushTokenAsync();
-        token = response.data;
+        const tokenResponse = await Notifications.getExpoPushTokenAsync({
+            projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
+        });
 
-        if (Platform.OS === 'android') {
-            await Notifications.setNotificationChannelAsync('default', {
-                name: 'default',
-                importance: Notifications.AndroidImportance.MAX,
-                vibrationPattern: [0, 250, 250, 250],
-                lightColor: "#0077b6"
-            })
-        }
-        return token;
+        console.log('Expo Push Token:', tokenResponse.data);
+        return tokenResponse.data;
+
     } catch (error) {
-        console.error("Error Getting Push Token", error);
+        console.error('Error Getting Push Token', error);
         return null;
     }
 }
@@ -81,7 +92,9 @@ export async function scheduleMedicationReminder(
     }
 }
 
-export async function scheduleRefillReminder(medication: Medication): Promise<string | undefined> {
+export async function scheduleRefillReminder(
+    medication: Medication
+): Promise<string | undefined> {
     if (!medication.refillReminder) return;
 
     try {
@@ -89,7 +102,7 @@ export async function scheduleRefillReminder(medication: Medication): Promise<st
             const identifier = await Notifications.scheduleNotificationAsync({
                 content: {
                     title: "Refill Reminder",
-                    body: `Your ${medication.name} Supply Is Running Low. Current Supply: ${medication.currentSupply}`,
+                    body: `Your ${medication.name} supply is running low. Current: ${medication.currentSupply}`,
                     data: { medicationId: medication.id, type: "refill" },
                 },
                 trigger: null,
@@ -106,14 +119,18 @@ export async function cancelMedicationReminders(
     medicationId: string
 ): Promise<void> {
     try {
-        const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
+        const scheduledNotifications =
+            await Notifications.getAllScheduledNotificationsAsync();
 
         for (const notification of scheduledNotifications) {
             const data = notification.content.data as {
                 medicationId?: string;
             } | null;
+
             if (data?.medicationId === medicationId) {
-                await Notifications.cancelScheduledNotificationAsync(notification.identifier);
+                await Notifications.cancelScheduledNotificationAsync(
+                    notification.identifier
+                );
             }
         }
     } catch (error) {
@@ -121,13 +138,14 @@ export async function cancelMedicationReminders(
     }
 }
 
-export async function updateMedicationReminders(medication: Medication): Promise<void> {
+export async function updateMedicationReminders(
+    medication: Medication
+): Promise<void> {
     try {
         await cancelMedicationReminders(medication.id);
-
         await scheduleMedicationReminder(medication);
         await scheduleRefillReminder(medication);
     } catch (error) {
-        console.error("Error Updating Medication Reminders", error)
+        console.error("Error Updating Medication Reminders", error);
     }
 }

@@ -1,7 +1,17 @@
+import {
+  registerForPushNotificationsAsync,
+  setupAndroidNotificationChannel,
+} from "@/utils/notifications";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 
 export default function RootLayout() {
+  useEffect(() => {
+    setupAndroidNotificationChannel();
+    registerForPushNotificationsAsync();
+  }, []);
+
   return (
     <>
       <StatusBar style="auto" />
