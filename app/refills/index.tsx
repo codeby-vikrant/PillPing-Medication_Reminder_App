@@ -1,9 +1,18 @@
 import { getMedication, Medication, updateMedication } from "@/utils/storage";
+import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { Alert, Platform, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function RefillTrackerScreen() {
   const router = useRouter();
@@ -71,13 +80,82 @@ export default function RefillTrackerScreen() {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <LinearGradient
         colors={["#0077b6", "#90e0ef"]}
         style={styles.headerGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
       />
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <Ionicons name="chevron-back" size={28} color="#0077b6" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Refill Tracker</Text>
+        </View>
+        <ScrollView
+          style={styles.medicationsContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          {medications.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Ionicons name="medical-outline" size={48} color="#ccc" />
+              <Text style={styles.emptyStateText}>No Medications To Track</Text>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => router.push("/medications/add")}
+              >
+                <Text style={styles.addButtonText}>Add Medication</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            medications.map((medication) => {
+              const supplyStatus = getSupplyStatus(medication);
+              const supplyPercentage =
+                (medication.currentSupply / medication.totalSupply) * 100;
+              return (
+                <View key={medication.id} style={styles.medicationCard}>
+                  <View style={styles.medicationHeader}>
+                    <View
+                      style={[
+                        styles.medicationColor,
+                        { backgroundColor: medication.color },
+                      ]}
+                    />
+                    <View style={styles.medicationInfo}>
+                      <Text style={styles.medicationName}>
+                        {medication.name}
+                      </Text>
+                      <Text style={styles.medicationDosage}>
+                        {medication.dosage}
+                      </Text>
+                    </View>
+                    <View
+                      style={[
+                        styles.statusBadge,
+                        { backgroundColor: supplyStatus.backgroundColor },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.statusText,
+                          { color: supplyStatus.color },
+                        ]}
+                      >
+                        {supplyStatus.status}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              );
+            })
+          )}
+        </ScrollView>
+      </View>
     </View>
   );
 }
