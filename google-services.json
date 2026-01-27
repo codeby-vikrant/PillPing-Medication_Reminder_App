@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "211576240480",
+    "project_id": "pillping-7d381",
+    "storage_bucket": "pillping-7d381.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211576240480:android:f55f39ba9b688800160605",
+        "android_client_info": {
+          "package_name": "com.codebyvikrant.pillping"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB36VP7d0K6gB1IspXXipST9K4v6SxKAzA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

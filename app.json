@@ -13,6 +13,8 @@
       "bundleIdentifier": "com.codebyvikrant.pillping"
     },
     "android": {
+      "package": "com.codebyvikrant.pillping",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -20,8 +22,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "com.codebyvikrant.pillping"
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
@@ -45,6 +46,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c8d70644-2abf-47d8-a647-e68dd0853a67"
+      }
     }
   }
 }
