@@ -16,7 +16,10 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
 import { addMedication } from "@/utils/storage";
-import { scheduleMedicationReminder } from "@/utils/notifications";
+import {
+  scheduleMedicationReminder,
+  scheduleRefillReminder,
+} from "@/utils/notifications";
 
 const { width } = Dimensions.get("window");
 
@@ -111,16 +114,15 @@ export default function AddMedicationScreen() {
                 size={24}
                 color={selectedFrequency === freq.label ? "#fff" : "#666"}
               />
-              <Text
-                style={[
-                  styles.optionsLabel,
-                  selectedFrequency === freq.label &&
-                    styles.selectedOptionsLabel,
-                ]}
-              >
-                {freq.label}
-              </Text>
             </View>
+            <Text
+              style={[
+                styles.optionsLabel,
+                selectedFrequency === freq.label && styles.selectedOptionsLabel,
+              ]}
+            >
+              {freq.label}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -178,6 +180,18 @@ export default function AddMedicationScreen() {
     if (!form.duration) {
       newError.duration = "Duration Is Required";
     }
+    if (form.refillReminder) {
+      if (!form.currentSupply) {
+        newError.currentSupply =
+          "Current Supply Is Required For Refill Tracking";
+      }
+      if (!form.refillAt) {
+        newError.refillAt = "Refill Alert Threshold Is Required";
+      }
+      if (Number(form.refillAt) >= Number(form.currentSupply)) {
+        newError.refillAt = "Refill Alert Must Be Less Than Current Supply";
+      }
+    }
     setErrors(newError);
     return Object.keys(newError).length === 0;
   };
@@ -209,6 +223,9 @@ export default function AddMedicationScreen() {
       if (medicationData.reminderEnabled) {
         await scheduleMedicationReminder(medicationData);
       }
+      if (medicationData.refillReminder) {
+        await scheduleRefillReminder(medicationData);
+      }
 
       Alert.alert(
         "Success",
@@ -229,24 +246,50 @@ export default function AddMedicationScreen() {
     }
   };
 
+  const handleFrequencySelect = (freq: string) => {
+    setSelectedFrequency(freq);
+    const selectedFreq = FREQUENCIES.find((f) => f.label === freq);
+    setForm((prev) => ({
+      ...prev,
+      frequency: freq,
+      times: selectedFreq?.times || [],
+    }));
+    if (errors.frequency) {
+      setErrors((prev) => ({ ...prev, frequency: "" }));
+    }
+  };
+
+  const handleDurationSelect = (dur: string) => {
+    setSelectedDuration(dur);
+    setForm((prev) => ({ ...prev, duration: dur }));
+    if (errors.duration) {
+      setErrors((prev) => ({ ...prev, duration: "" }));
+    }
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
         colors={["#0077b6", "#90e0ef"]}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        end={{ x: 1, y: 0 }}
         style={styles.headerGradient}
       />
+
       <View style={styles.content}>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
             <Ionicons name="chevron-back" size={28} color={"#0077b6"} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>New Medication</Text>
         </View>
+
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{ flex: 1 }}
+          style={styles.formContainer}
           contentContainerStyle={styles.formContentContainer}
         >
           <View style={styles.section}>
@@ -284,100 +327,97 @@ export default function AddMedicationScreen() {
                 <Text style={styles.errorText}>{errors.dosage}</Text>
               )}
             </View>
-            <View style={styles.container}>
-              <Text style={styles.sectionTitle}>How Often?</Text>
-              {errors.frequency && (
-                <Text style={styles.errorText}>{errors.frequency}</Text>
-              )}
-              {renderFrequencyOptions()}
-              <Text style={styles.sectionTitle}>For How Long?</Text>
-              {errors.duration && (
-                <Text style={styles.errorText}>{errors.duration}</Text>
-              )}
-              {renderDurationOptions()}
-              <TouchableOpacity
-                style={styles.dateButton}
-                onPress={() => setShowDatePicker(true)}
-              >
-                <View style={styles.dateIconContainer}>
-                  <Ionicons name="calendar" size={20} color={"#0077b6"} />
-                </View>
-                <Text style={styles.dateButtonText}>
-                  Starts {form.startDate.toLocaleDateString()}
-                </Text>
-                <Ionicons name="chevron-forward" size={20} color={"#666"} />
-              </TouchableOpacity>
-              {showDatePicker && (
-                <DateTimePicker
-                  mode="date"
-                  value={form.startDate}
-                  onChange={(event, date) => {
-                    setShowDatePicker(false);
-                    if (date) setForm({ ...form, startDate: date });
-                  }}
-                />
-              )}
-
-              {form.frequency && form.frequency !== "As Needed" && (
-                <View style={styles.timesContainer}>
-                  <Text style={styles.timesTitle}>Medication Times</Text>
-                  {form.times.map((time, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.timesButton}
-                      onPress={() => {
-                        setShowTimePicker(true);
-                      }}
-                    >
-                      <View style={styles.timesIconContainer}>
-                        <Ionicons
-                          name="time-outline"
-                          size={20}
-                          color={"#0077b6"}
-                        />
-                      </View>
-                      <Text style={styles.timesButtonText}>{time}</Text>
-                      <Ionicons
-                        name="chevron-forward"
-                        size={20}
-                        color={"#666"}
-                      />
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-
-              {showTimePicker && (
-                <DateTimePicker
-                  mode="time"
-                  value={(() => {
-                    const [hours, minutes] = form.times[0]
-                      .split(":")
-                      .map(Number);
-                    const date = new Date();
-                    date.setHours(hours, minutes, 0, 0);
-                    return date;
-                  })()}
-                  onChange={(event, date) => {
-                    setShowTimePicker(false);
-                    if (date) {
-                      const newTime = date.toLocaleTimeString("default", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: false,
-                      });
-                      setForm((prev) => ({
-                        ...prev,
-                        times: prev.times.map((t, i) =>
-                          i === 0 ? newTime : t,
-                        ),
-                      }));
-                    }
-                  }}
-                />
-              )}
-            </View>
           </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>How Often?</Text>
+            {errors.frequency && (
+              <Text style={styles.errorText}>{errors.frequency}</Text>
+            )}
+            {renderFrequencyOptions()}
+
+            <Text style={styles.sectionTitle}>For How Long?</Text>
+            {errors.duration && (
+              <Text style={styles.errorText}>{errors.duration}</Text>
+            )}
+            {renderDurationOptions()}
+
+            <TouchableOpacity
+              style={styles.dateButton}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <View style={styles.dateIconContainer}>
+                <Ionicons name="calendar" size={20} color={"#0077b6"} />
+              </View>
+              <Text style={styles.dateButtonText}>
+                Starts {form.startDate.toLocaleDateString()}
+              </Text>
+              <Ionicons name="chevron-forward" size={20} color={"#666"} />
+            </TouchableOpacity>
+
+            {showDatePicker && (
+              <DateTimePicker
+                mode="date"
+                value={form.startDate}
+                onChange={(event, date) => {
+                  setShowDatePicker(false);
+                  if (date) setForm({ ...form, startDate: date });
+                }}
+              />
+            )}
+
+            {form.frequency && form.frequency !== "As Needed" && (
+              <View style={styles.timesContainer}>
+                <Text style={styles.timesTitle}>Medication Times</Text>
+                {form.times.map((time, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.timesButton}
+                    onPress={() => {
+                      setShowTimePicker(true);
+                    }}
+                  >
+                    <View style={styles.timesIconContainer}>
+                      <Ionicons
+                        name="time-outline"
+                        size={20}
+                        color={"#0077b6"}
+                      />
+                    </View>
+                    <Text style={styles.timesButtonText}>{time}</Text>
+                    <Ionicons name="chevron-forward" size={20} color={"#666"} />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
+            {showTimePicker && (
+              <DateTimePicker
+                mode="time"
+                value={(() => {
+                  const [hours, minutes] = form.times[0].split(":").map(Number);
+                  const date = new Date();
+                  date.setHours(hours, minutes, 0, 0);
+                  return date;
+                })()}
+                onChange={(event, date) => {
+                  setShowTimePicker(false);
+                  if (date) {
+                    const newTime = date.toLocaleTimeString("default", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    });
+                    setForm((prev) => ({
+                      ...prev,
+                      times: prev.times.map((t, i) => (i === 0 ? newTime : t)),
+                    }));
+                  }
+                }}
+              />
+            )}
+          </View>
+
           <View style={styles.section}>
             <View style={styles.card}>
               <View style={styles.switchRow}>
@@ -407,6 +447,7 @@ export default function AddMedicationScreen() {
               </View>
             </View>
           </View>
+
           <View style={styles.section}>
             <View style={styles.textAreaContainer}>
               <TextInput
@@ -422,22 +463,24 @@ export default function AddMedicationScreen() {
             </View>
           </View>
         </ScrollView>
+
         <View style={styles.footer}>
           <TouchableOpacity
             style={[
               styles.saveButton,
               isSubmitting && styles.saveButtonDisabled,
             ]}
-            onPress={() => handleSave()}
+            onPress={handleSave}
+            disabled={isSubmitting}
           >
             <LinearGradient
               colors={["#90e0ef", "#0077b6"]}
               start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
               style={styles.saveButtonGradient}
             >
               <Text style={styles.saveButtonText}>
-                {isSubmitting ? "Adding" : "Add Medications"}
+                {isSubmitting ? "Adding..." : "Add Medication"}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -495,6 +538,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#fff",
     marginLeft: 15,
+  },
+  formContainer: {
+    flex: 1,
   },
   formContentContainer: {
     padding: 20,
