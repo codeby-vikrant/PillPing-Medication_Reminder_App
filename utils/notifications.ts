@@ -75,6 +75,7 @@ export async function scheduleMedicationReminder(
                     data: { medicationId: medication.id },
                 },
                 trigger: {
+                    type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
                     hour: hours,
                     minute: minutes,
                     repeats: true,
