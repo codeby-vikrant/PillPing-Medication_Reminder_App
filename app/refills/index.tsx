@@ -150,6 +150,58 @@ export default function RefillTrackerScreen() {
                       </Text>
                     </View>
                   </View>
+
+                  <View style={styles.supplyContainer}>
+                    <View style={styles.supplyInfo}>
+                      <Text style={styles.supplyLabel}>Current Supply</Text>
+                      <Text style={styles.supplyValue}>
+                        {medication.currentSupply} Units
+                      </Text>
+                    </View>
+                    <View style={styles.progressBarContainer}>
+                      <View style={styles.progressBarBackground}>
+                        <View
+                          style={[
+                            styles.progressBar,
+                            {
+                              width: `${supplyPercentage}%`,
+                              backgroundColor: supplyStatus.color,
+                            },
+                          ]}
+                        />
+                      </View>
+                      <Text style={styles.progressText}>
+                        {Math.round(supplyPercentage)}%
+                      </Text>
+                    </View>
+                    <View style={styles.refillInfo}>
+                      <Text style={styles.refillLabel}>
+                        Refill At: {medication.refillAt}%
+                      </Text>
+                      {medication.lastRefillDate && (
+                        <Text style={styles.lastRefillDate}>
+                          Last Refill:{" "}
+                          {new Date(
+                            medication.lastRefillDate,
+                          ).toLocaleDateString()}
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    style={[
+                      styles.refillButton,
+                      {
+                        backgroundColor:
+                          supplyPercentage < 100 ? medication.color : "#e0e0e0",
+                      },
+                    ]}
+                    onPress={() => handleRefill(medication)}
+                    disabled={supplyPercentage >= 100}
+                  >
+                    <Text style={styles.refillButtonText}>Record Refill</Text>
+                  </TouchableOpacity>
                 </View>
               );
             })
