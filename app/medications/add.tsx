@@ -449,6 +449,89 @@ export default function AddMedicationScreen() {
           </View>
 
           <View style={styles.section}>
+            <View style={styles.card}>
+              <View style={styles.switchRow}>
+                <View style={styles.switchLabelContainer}>
+                  <View style={styles.iconContainer}>
+                    <Ionicons name="reload" size={20} color="#0077b6" />
+                  </View>
+                  <View>
+                    <Text style={styles.switchLabel}>Refill Tracking</Text>
+                    <Text style={styles.switchSubLabel}>
+                      Get Notified When You Need To Refill
+                    </Text>
+                  </View>
+                </View>
+                <Switch
+                  value={form.refillReminder}
+                  onValueChange={(value) => {
+                    setForm({ ...form, refillReminder: value });
+                    if (!value) {
+                      setErrors({
+                        ...errors,
+                        currentSupply: "",
+                        refillAt: "",
+                      });
+                    }
+                  }}
+                  trackColor={{ false: "#ddd", true: "#0077b6" }}
+                  thumbColor="#fff"
+                />
+              </View>
+              {form.refillReminder && (
+                <View style={styles.refillInputs}>
+                  <View style={styles.inputRow}>
+                    <View style={[styles.inputContainer, styles.flex1]}>
+                      <TextInput
+                        style={[
+                          styles.input,
+                          errors.currentSupply && styles.inputError,
+                        ]}
+                        placeholder="Current Supply"
+                        placeholderTextColor="#999"
+                        value={form.currentSupply}
+                        onChangeText={(text) => {
+                          setForm({ ...form, currentSupply: text });
+                          if (errors.currentSupply) {
+                            setErrors({ ...errors, currentSupply: "" });
+                          }
+                        }}
+                        keyboardType="numeric"
+                      />
+                      {errors.currentSupply && (
+                        <Text style={styles.errorText}>
+                          {errors.currentSupply}
+                        </Text>
+                      )}
+                    </View>
+                    <View style={[styles.inputContainer, styles.flex1]}>
+                      <TextInput
+                        style={[
+                          styles.input,
+                          errors.refillAt && styles.inputError,
+                        ]}
+                        placeholder="Alert At"
+                        placeholderTextColor="#999"
+                        value={form.refillAt}
+                        onChangeText={(text) => {
+                          setForm({ ...form, refillAt: "" });
+                          if (errors.refillAt) {
+                            setErrors({ ...errors, refillAt: "" });
+                          }
+                        }}
+                        keyboardType="numeric"
+                      />
+                      {errors.refillAt && (
+                        <Text style={styles.errorText}>{errors.refillAt}</Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+              )}
+            </View>
+          </View>
+
+          <View style={styles.section}>
             <View style={styles.textAreaContainer}>
               <TextInput
                 placeholder="Add Notes Or Special Instructions..."
@@ -664,6 +747,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
+  refillInputs: {
+    marginTop: 15,
+  },
   timesContainer: {
     marginTop: 20,
   },
@@ -742,6 +828,19 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#333",
     marginTop: 2,
+  },
+  inputRow: {
+    flexDirection: "row",
+    marginTop: 15,
+    gap: 10,
+  },
+  flex1: {
+    flex: 1,
+  },
+  input: {
+    padding: 15,
+    fontSize: 16,
+    color: "#333",
   },
   textAreaContainer: {
     backgroundColor: "#fff",
