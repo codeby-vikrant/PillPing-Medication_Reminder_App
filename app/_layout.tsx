@@ -25,7 +25,11 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="refills/index"
-          options={{ headerShown: false, headerBackTitle: "", title: "" }}
+          options={{
+            headerShown: false,
+            headerBackTitle: "",
+            title: "",
+          }}
         />
         <Stack.Screen
           name="calendar/index"
