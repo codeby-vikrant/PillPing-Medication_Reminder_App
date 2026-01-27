@@ -114,6 +114,7 @@ export default function CalendarScreen() {
       const taken = dayDoses.some(
         (dose) => dose.medicationId === medication.id && dose.taken,
       );
+
       return (
         <View key={medication.id} style={styles.medicationCard}>
           <View
@@ -169,51 +170,54 @@ export default function CalendarScreen() {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Calendar</Text>
         </View>
-      </View>
 
-      <View style={styles.calendarContainer}>
-        <View style={styles.monthHeader}>
-          <TouchableOpacity
-            onPress={() =>
-              setSelectedDate(
-                new Date(
-                  selectedDate.getFullYear(),
-                  selectedDate.getMonth() - 1,
-                  1,
-                ),
-              )
-            }
-          >
-            <Ionicons name="chevron-back" size={24} color={"#333"} />
-          </TouchableOpacity>
-          <Text style={styles.monthText}>
-            {selectedDate.toLocaleString("default", {
-              month: "long",
-              year: "numeric",
-            })}
-          </Text>
-          <TouchableOpacity
-            onPress={() =>
-              setSelectedDate(
-                new Date(
-                  selectedDate.getFullYear(),
-                  selectedDate.getMonth() + 1,
-                  1,
-                ),
-              )
-            }
-          >
-            <Ionicons name="chevron-forward" size={24} color={"#333"} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.weekdayHeader}>
-          {WEEKDAYS.map((day) => (
-            <Text key={day} style={styles.weekdayText}>
-              {day}
+        <View style={styles.calendarContainer}>
+          <View style={styles.monthHeader}>
+            <TouchableOpacity
+              onPress={() =>
+                setSelectedDate(
+                  new Date(
+                    selectedDate.getFullYear(),
+                    selectedDate.getMonth() - 1,
+                    1,
+                  ),
+                )
+              }
+            >
+              <Ionicons name="chevron-back" size={24} color={"#333"} />
+            </TouchableOpacity>
+            <Text style={styles.monthText}>
+              {selectedDate.toLocaleString("default", {
+                month: "long",
+                year: "numeric",
+              })}
             </Text>
-          ))}
+            <TouchableOpacity
+              onPress={() =>
+                setSelectedDate(
+                  new Date(
+                    selectedDate.getFullYear(),
+                    selectedDate.getMonth() + 1,
+                    1,
+                  ),
+                )
+              }
+            >
+              <Ionicons name="chevron-forward" size={24} color={"#333"} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.weekdayHeader}>
+            {WEEKDAYS.map((day) => (
+              <Text key={day} style={styles.weekdayText}>
+                {day}
+              </Text>
+            ))}
+          </View>
+
           {renderCalendar()}
         </View>
+        
         <View style={styles.scheduleContainer}>
           <Text style={styles.scheduleTitle}>
             {selectedDate.toLocaleDateString("default", {
