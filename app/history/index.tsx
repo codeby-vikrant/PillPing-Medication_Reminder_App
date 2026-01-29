@@ -166,17 +166,17 @@ export default function HistoryScreen() {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={
-                (styles.filterButton,
-                selectedFilter === "missed" && styles.filterButtonActive)
-              }
+              style={[
+                styles.filterButton,
+                selectedFilter === "missed" && styles.filterButtonActive,
+              ]}
               onPress={() => setSelectedFilter("missed")}
             >
               <Text
-                style={
-                  (styles.filterText,
-                  selectedFilter === "missed" && styles.filterTextActive)
-                }
+                style={[
+                  styles.filterText,
+                  selectedFilter === "missed" && styles.filterTextActive,
+                ]}
               >
                 Missed
               </Text>
