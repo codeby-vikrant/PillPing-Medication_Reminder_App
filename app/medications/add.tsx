@@ -526,7 +526,7 @@ export default function AddMedicationScreen() {
                         placeholderTextColor="#999"
                         value={form.refillAt}
                         onChangeText={(text) => {
-                          setForm({ ...form, refillAt: "" });
+                          setForm({ ...form, refillAt: text });
                           if (errors.refillAt) {
                             setErrors({ ...errors, refillAt: "" });
                           }
