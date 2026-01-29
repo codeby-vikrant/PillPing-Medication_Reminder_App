@@ -7,10 +7,10 @@ let hasLoggedPushToken = false;
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-        shouldShowBanner: true,
-        shouldShowList: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+        shouldShowBanner: false,
+        shouldShowList: false,
     }),
 });
 
