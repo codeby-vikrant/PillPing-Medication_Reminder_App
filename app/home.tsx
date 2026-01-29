@@ -29,6 +29,7 @@ import {
 import Svg, { Circle } from "react-native-svg";
 
 const width = Dimensions.get("window").width;
+const PROGRESS_ANIMATION_DURATION = 1200;
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const QUICK_ACTIONS = [
   {
@@ -73,7 +74,8 @@ function CircularProgress({
   completedDoses,
 }: CircularProgressProps) {
   const animationValue = useRef(new Animated.Value(0)).current;
-  const size = width * 0.55;
+  const PROGRESS_RING_RATIO = 0.55;
+  const size = width * PROGRESS_RING_RATIO;
   const strokeWidth = 15;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -81,7 +83,7 @@ function CircularProgress({
   useEffect(() => {
     Animated.timing(animationValue, {
       toValue: progress,
-      duration: 1500,
+      duration: PROGRESS_ANIMATION_DURATION,
       useNativeDriver: true,
     }).start();
   }, [animationValue, progress]);
@@ -216,9 +218,9 @@ export default function HomeScreen() {
     }, [loadMedications]),
   );
 
-  const handleTakeDose = async (medication: Medication) => {
+  const handleTakeDose = async (medication: Medication, time: string) => {
     try {
-      await recordDose(medication.id, true, new Date().toISOString());
+      await recordDose(medication.id, time, true, new Date().toISOString());
       await loadMedications();
     } catch (error) {
       console.error("Error Recording Dose", error);
@@ -226,9 +228,10 @@ export default function HomeScreen() {
     }
   };
 
-  const isDoseTaken = (medicationId: string) => {
+  const isDoseTaken = (medicationId: string, time: string) => {
     return doseHistory.some(
-      (dose) => dose.medicationId === medicationId && dose.taken,
+      (dose) =>
+        dose.medicationId === medicationId && dose.time === time && dose.taken,
     );
   };
 
@@ -238,6 +241,8 @@ export default function HomeScreen() {
   );
 
   const progress = totalDoses > 0 ? completedDoses / totalDoses : 0;
+
+  const pendingDoses = totalDoses - completedDoses;
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
@@ -254,7 +259,7 @@ export default function HomeScreen() {
               <Ionicons name="notifications-outline" size={24} color="#fff" />
               {todaysMedications.length > 0 && (
                 <View style={styles.notificationBadge}>
-                  <Text style={styles.notificationCount}>{todaysMedications.length}</Text>
+                  <Text style={styles.notificationCount}>{pendingDoses}</Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -317,47 +322,52 @@ export default function HomeScreen() {
             </Link>
           </View>
         ) : (
-          todaysMedications.map((medication) => {
-            const taken = isDoseTaken(medication.id);
-            return (
-              <View style={styles.doseCard} key={medication.id}>
-                <View
-                  style={[
-                    styles.doseBadge,
-                    { backgroundColor: `${medication.color}15` },
-                  ]}
-                >
-                  <Ionicons name="medical" size={24} />
-                </View>
-                <View style={styles.doseInfo}>
-                  <View>
-                    <Text style={styles.medicineName}>{medication.name}</Text>
-                    <Text style={styles.dosageInfo}>{medication.dosage}</Text>
-                  </View>
-                  <View style={styles.doseTime}>
-                    <Ionicons name="time-outline" size={16} color="#ccc" />
-                    <Text style={styles.timeText}>{medication.times[0]}</Text>
-                  </View>
-                </View>
-                {taken ? (
-                  <View style={styles.takeDoseButton}>
-                    <Ionicons name="checkmark-circle-outline" size={24} />
-                    <Text style={styles.takeDoseText}>Taken</Text>
-                  </View>
-                ) : (
-                  <TouchableOpacity
+          todaysMedications.map((medication) =>
+            medication.times.map((time) => {
+              const taken = isDoseTaken(medication.id, time);
+              return (
+                <View style={styles.doseCard} key={`${medication.id}-${time}`}>
+                  <View
                     style={[
-                      styles.takeDoseButton,
-                      { backgroundColor: medication.color },
+                      styles.doseBadge,
+                      { backgroundColor: `${medication.color}15` },
                     ]}
-                    onPress={() => handleTakeDose(medication)}
                   >
-                    <Text style={styles.takeDoseText}>Take</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            );
-          })
+                    <Ionicons name="medical" size={24} />
+                  </View>
+
+                  <View style={styles.doseInfo}>
+                    <View>
+                      <Text style={styles.medicineName}>{medication.name}</Text>
+                      <Text style={styles.dosageInfo}>{medication.dosage}</Text>
+                    </View>
+
+                    <View style={styles.doseTime}>
+                      <Ionicons name="time-outline" size={16} color="#ccc" />
+                      <Text style={styles.timeText}>{time}</Text>
+                    </View>
+                  </View>
+
+                  {taken ? (
+                    <View style={styles.takeDoseButton}>
+                      <Ionicons name="checkmark-circle-outline" size={24} />
+                      <Text style={styles.takeDoseText}>Taken</Text>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      style={[
+                        styles.takeDoseButton,
+                        { backgroundColor: medication.color },
+                      ]}
+                      onPress={() => handleTakeDose(medication, time)}
+                    >
+                      <Text style={styles.takeDoseText}>Take</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              );
+            }),
+          )
         )}
       </View>
       <Modal
@@ -387,7 +397,7 @@ export default function HomeScreen() {
                   {medication.dosage}
                 </Text>
                 <Text style={styles.notificationTime}>
-                  {medication.times[0]}
+                  {medication.times.join(", ")}
                 </Text>
               </View>
             </View>
