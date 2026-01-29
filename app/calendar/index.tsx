@@ -95,6 +95,14 @@ export default function CalendarScreen() {
       );
 
       if ((firstDay + day) % 7 === 0 || day === days) {
+        while (week.length < 7) {
+          week.push(
+            <View
+              key={`empty-end-${week.length}-${weekIndex}`}
+              style={styles.calendarDay}
+            />,
+          );
+        }
         calendar.push(
           <View
             key={`week-${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${weekIndex++}`}
