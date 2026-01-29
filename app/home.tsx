@@ -81,7 +81,7 @@ function CircularProgress({
   useEffect(() => {
     Animated.timing(animationValue, {
       toValue: progress,
-      duration: 1000,
+      duration: 1500,
       useNativeDriver: true,
     }).start();
   }, [animationValue, progress]);
@@ -248,11 +248,11 @@ export default function HomeScreen() {
               onPress={() => setShowNotifications(true)}
             >
               <Ionicons name="notifications-outline" size={24} color="#fff" />
-              {
+              {todaysMedications.length > 0 && (
                 <View style={styles.notificationBadge}>
                   <Text style={styles.notificationCount}>3</Text>
                 </View>
-              }
+              )}
             </TouchableOpacity>
           </View>
           <CircularProgress
@@ -262,6 +262,7 @@ export default function HomeScreen() {
           />
         </View>
       </LinearGradient>
+
       <View style={styles.content}>
         <View style={styles.quickActionsContainer}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
