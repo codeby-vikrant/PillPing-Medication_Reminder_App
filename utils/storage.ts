@@ -100,18 +100,14 @@ export async function getTodaysDoses(): Promise<DoseHistory[]> {
     }
 }
 
-export async function recordDose(medicationId: string, time: string, taken: boolean, timestamp: string): Promise<void> {
+export async function recordDose(
+    medicationId: string,
+    time: string,
+    taken: boolean,
+    timestamp: string
+): Promise<void> {
     try {
         const history = await getDoseHistory();
-        const newDose: DoseHistory = {
-            id: Math.random().toString(36).substring(2, 9),
-            medicationId,
-            time,
-            timestamp,
-            taken
-        };
-        history.push(newDose);
-
         const today = new Date(timestamp).toDateString();
 
         const alreadyRecorded = history.some(
@@ -123,11 +119,21 @@ export async function recordDose(medicationId: string, time: string, taken: bool
 
         if (alreadyRecorded) return;
 
+        const newDose: DoseHistory = {
+            id: `${medicationId}-${time}-${Date.now()}`,
+            medicationId,
+            time,
+            timestamp,
+            taken,
+        };
+
+        history.push(newDose);
         await AsyncStorage.setItem(DOSE_HISTORY_KEY, JSON.stringify(history));
 
         if (taken) {
             const medications = await getMedication();
             const medication = medications.find((med) => med.id === medicationId);
+
             if (medication && medication.currentSupply > 0) {
                 medication.currentSupply -= 1;
                 await updateMedication(medication);
