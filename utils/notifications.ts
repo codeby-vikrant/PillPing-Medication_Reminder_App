@@ -3,6 +3,8 @@ import * as Device from 'expo-device'
 import { Platform } from 'react-native'
 import { Medication } from './storage'
 
+let hasLoggedPushToken = false;
+
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,
@@ -48,7 +50,10 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
             projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
         });
 
-        console.log('Expo Push Token:', tokenResponse.data);
+        if (!hasLoggedPushToken) {
+            console.log('Expo Push Token:', tokenResponse.data);
+            hasLoggedPushToken = true;
+        }
         return tokenResponse.data;
 
     } catch (error) {
