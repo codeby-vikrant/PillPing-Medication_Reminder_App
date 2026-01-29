@@ -134,3 +134,13 @@ export async function clearAllData(): Promise<void> {
         throw error;
     }
 }
+
+export async function getMedicationById(id: string): Promise<Medication | null> {
+    try {
+        const medications = await getMedication();
+        return medications.find((med) => med.id === id) || null;
+    } catch (error) {
+        console.error("Error Getting Medication By ID", error);
+        return null;
+    }
+}
