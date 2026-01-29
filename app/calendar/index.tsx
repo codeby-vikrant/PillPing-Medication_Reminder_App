@@ -60,6 +60,7 @@ export default function CalendarScreen() {
   const renderCalendar = () => {
     const calendar: JSX.Element[] = [];
     let week: JSX.Element[] = [];
+    let weekIndex = 0;
 
     for (let i = 0; i < firstDay; i++) {
       week.push(<View key={`empty-${i}`} style={styles.calendarDay} />);
@@ -69,6 +70,7 @@ export default function CalendarScreen() {
       const date = new Date(
         selectedDate.getFullYear(),
         selectedDate.getMonth(),
+        day,
       );
       const isToday = new Date().toDateString() === date.toDateString();
       const hasDoses = doseHistory.some(
@@ -77,7 +79,7 @@ export default function CalendarScreen() {
       );
       week.push(
         <TouchableOpacity
-          key={day}
+          key={`${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${day}`}
           style={[
             styles.calendarDay,
             isToday && styles.today,
@@ -94,7 +96,10 @@ export default function CalendarScreen() {
 
       if ((firstDay + day) % 7 === 0 || day === days) {
         calendar.push(
-          <View key={day} style={styles.calendarWeek}>
+          <View
+            key={`week-${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${weekIndex++}`}
+            style={styles.calendarWeek}
+          >
             {week}
           </View>,
         );
@@ -106,50 +111,63 @@ export default function CalendarScreen() {
 
   const renderMedicationsForDate = () => {
     const dateStr = selectedDate.toDateString();
+
     const dayDoses = doseHistory.filter(
       (dose) => new Date(dose.timestamp).toDateString() === dateStr,
     );
 
-    return medications.map((medication) => {
-      const taken = dayDoses.some(
-        (dose) => dose.medicationId === medication.id && dose.taken,
-      );
+    return medications.flatMap((medication) =>
+      medication.times.map((time) => {
+        const taken = dayDoses.some(
+          (dose) =>
+            dose.medicationId === medication.id &&
+            dose.time === time &&
+            dose.taken,
+        );
 
-      return (
-        <View key={medication.id} style={styles.medicationCard}>
-          <View
-            style={[
-              styles.medicationColor,
-              { backgroundColor: medication.color },
-            ]}
-          />
-          <View style={styles.medicationInfo}>
-            <Text style={styles.medicationName}>{medication.name}</Text>
-            <Text style={styles.medicationDosage}>{medication.dosage}</Text>
-            <Text style={styles.medicationTime}>{medication.times[0]}</Text>
-          </View>
-          {taken ? (
-            <View style={styles.takenBadge}>
-              <Ionicons name="checkmark-circle" size={20} color={"#0077b6"} />
-              <Text style={styles.takenText}>Taken</Text>
-            </View>
-          ) : (
-            <TouchableOpacity
+        return (
+          <View key={`${medication.id}-${time}`} style={styles.medicationCard}>
+            <View
               style={[
-                styles.takeDoseButton,
+                styles.medicationColor,
                 { backgroundColor: medication.color },
               ]}
-              onPress={async () => {
-                await recordDose(medication.id, true, new Date().toISOString());
-                loadData();
-              }}
-            >
-              <Text style={styles.takeDoseText}>Take</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      );
-    });
+            />
+
+            <View style={styles.medicationInfo}>
+              <Text style={styles.medicationName}>{medication.name}</Text>
+              <Text style={styles.medicationDosage}>{medication.dosage}</Text>
+              <Text style={styles.medicationTime}>{time}</Text>
+            </View>
+
+            {taken ? (
+              <View style={styles.takenBadge}>
+                <Ionicons name="checkmark-circle" size={20} color={"#0077b6"} />
+                <Text style={styles.takenText}>Taken</Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={[
+                  styles.takeDoseButton,
+                  { backgroundColor: medication.color },
+                ]}
+                onPress={async () => {
+                  await recordDose(
+                    medication.id,
+                    time,
+                    true,
+                    new Date().toISOString(),
+                  );
+                  loadData();
+                }}
+              >
+                <Text style={styles.takeDoseText}>Take</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        );
+      }),
+    );
   };
 
   return (
@@ -217,7 +235,7 @@ export default function CalendarScreen() {
 
           {renderCalendar()}
         </View>
-        
+
         <View style={styles.scheduleContainer}>
           <Text style={styles.scheduleTitle}>
             {selectedDate.toLocaleDateString("default", {
@@ -325,10 +343,10 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   today: {
-    backgroundColor: "#0b4c6f",
+    backgroundColor: "#0077b6",
   },
   todayText: {
-    color: "#0077b6",
+    color: "#fff",
     fontWeight: "600",
   },
   hasEvents: {
