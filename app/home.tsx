@@ -339,6 +339,12 @@ export default function HomeScreen() {
                     <View>
                       <Text style={styles.medicineName}>{medication.name}</Text>
                       <Text style={styles.dosageInfo}>{medication.dosage}</Text>
+
+                      {medication.notes ? (
+                        <Text style={styles.instructionsText} numberOfLines={2}>
+                          📝 {medication.notes}
+                        </Text>
+                      ) : null}
                     </View>
 
                     <View style={styles.doseTime}>
@@ -690,5 +696,10 @@ const styles = StyleSheet.create({
   notificationTime: {
     fontSize: 12,
     color: "#999",
+  },
+  instructionsText: {
+    fontSize: 12,
+    color: "#555",
+    marginTop: 4,
   },
 });
