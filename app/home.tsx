@@ -311,7 +311,7 @@ export default function HomeScreen() {
             <Text style={styles.emptyStateText}>
               No Medications Scheduled For Today.
             </Text>
-            <Link href="/medications/add">
+            <Link href="/medications/add" asChild>
               <TouchableOpacity style={styles.addMedicationsButton}>
                 <Text style={styles.addMedicationsButtonText}>
                   Add Medications
@@ -561,9 +561,12 @@ const styles = StyleSheet.create({
   },
   addMedicationsButton: {
     backgroundColor: "#0077b6",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
     borderRadius: 20,
+    width: "100%",
+    minWidth: 200,
+    alignItems: "center",
   },
   addMedicationsButtonText: {
     color: "#fff",
