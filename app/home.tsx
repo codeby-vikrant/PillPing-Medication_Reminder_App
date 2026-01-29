@@ -126,6 +126,16 @@ function CircularProgress({
   );
 }
 
+const formatTo12Hour = (time: string) => {
+  const [hour, minute] = time.split(":").map(Number);
+
+  const period = hour >= 12 ? "PM" : "AM";
+  const h = hour % 12 || 12;
+  const m = minute.toString().padStart(2, "0");
+
+  return `${h}:${m} ${period}`;
+};
+
 export default function HomeScreen() {
   const router = useRouter();
   const [todaysMedications, setTodaysMedications] = useState<Medication[]>([]);
@@ -333,7 +343,9 @@ export default function HomeScreen() {
 
                     <View style={styles.doseTime}>
                       <Ionicons name="time-outline" size={16} color="#ccc" />
-                      <Text style={styles.timeText}>{time}</Text>
+                      <Text style={styles.timeText}>
+                        {formatTo12Hour(time)}
+                      </Text>
                     </View>
                   </View>
 

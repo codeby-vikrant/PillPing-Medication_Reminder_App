@@ -22,6 +22,16 @@ import {
 
 type EnrichedDoseHistory = DoseHistory & { medication?: Medication };
 
+const formatTo12Hour = (time: string) => {
+  const [hour, minute] = time.split(":").map(Number);
+
+  const period = hour >= 12 ? "PM" : "AM";
+  const h = hour % 12 || 12;
+  const m = minute.toString().padStart(2, "0");
+
+  return `${h}:${m} ${period}`;
+};
+
 export default function HistoryScreen() {
   const router = useRouter();
   const [history, setHistory] = useState<EnrichedDoseHistory[]>([]);
@@ -210,7 +220,7 @@ export default function HistoryScreen() {
                       {dose.medication?.dosage}
                     </Text>
                     <Text style={styles.timeText}>
-                      Scheduled: {dose.time} • Taken at{" "}
+                      Scheduled: {formatTo12Hour(dose.time)} • Taken at{" "}
                       {new Date(dose.timestamp).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",

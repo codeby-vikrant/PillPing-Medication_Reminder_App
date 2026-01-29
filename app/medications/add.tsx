@@ -64,6 +64,16 @@ const DURATIONS = [
   { id: "5", label: "Ongoing", value: -1 },
 ];
 
+const formatTo12Hour = (time: string) => {
+  const [hour, minute] = time.split(":").map(Number);
+
+  const period = hour >= 12 ? "PM" : "AM";
+  const h = hour % 12 || 12;
+  const m = minute.toString().padStart(2, "0");
+
+  return `${h}:${m} ${period}`;
+};
+
 export default function AddMedicationScreen() {
   const [form, setForm] = useState({
     name: "",
@@ -384,7 +394,9 @@ export default function AddMedicationScreen() {
                         color={"#0077b6"}
                       />
                     </View>
-                    <Text style={styles.timesButtonText}>{time}</Text>
+                    <Text style={styles.timesButtonText}>
+                      {formatTo12Hour(time)}
+                    </Text>
                     <Ionicons name="chevron-forward" size={20} color={"#666"} />
                   </TouchableOpacity>
                 ))}

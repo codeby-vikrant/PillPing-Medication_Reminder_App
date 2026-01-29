@@ -63,51 +63,47 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
 
 export async function scheduleMedicationReminder(
     medication: Medication
-): Promise<string[] | undefined> {
+): Promise<string | undefined> {
     if (!medication.reminderEnabled) return;
 
     try {
-        const identifiers: string[] = [];
+        const now = new Date();
+        let nextTrigger: Date | null = null;
 
-        const getDurationDays = (duration: string): number => {
-            if (duration.includes("7")) return 7;
-            if (duration.includes("14")) return 14;
-            if (duration.includes("30")) return 30;
-            if (duration.includes("90")) return 90;
-            return 30;
-        };
-
-        const days = getDurationDays(medication.duration);
         const startDate = new Date(medication.startDate);
 
-        for (let day = 0; day < days; day++) {
+        for (let dayOffset = 0; dayOffset < 2; dayOffset++) {
             for (const time of medication.times) {
                 const [hours, minutes] = time.split(":").map(Number);
 
-                const triggerDate = new Date(startDate);
-                triggerDate.setDate(startDate.getDate() + day);
-                triggerDate.setHours(hours, minutes, 0, 0);
+                const candidate = new Date(startDate);
+                candidate.setDate(startDate.getDate() + dayOffset);
+                candidate.setHours(hours, minutes, 0, 0);
 
-                if (triggerDate <= new Date()) continue;
-
-                const id = await Notifications.scheduleNotificationAsync({
-                    content: {
-                        title: "Medication Reminder 💊",
-                        body: `Time to take ${medication.name} (${medication.dosage})`,
-                        data: { medicationId: medication.id },
-                    },
-                    trigger: {
-                        type: Notifications.SchedulableTriggerInputTypes.DATE,
-                        date: triggerDate,
-                        channelId: "default",
+                if (candidate > now) {
+                    if (!nextTrigger || candidate < nextTrigger) {
+                        nextTrigger = candidate;
                     }
-                });
-
-                identifiers.push(id);
+                }
             }
         }
 
-        return identifiers;
+        if (!nextTrigger) return;
+
+        const id = await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "Medication Reminder 💊",
+                body: `Time to take ${medication.name} (${medication.dosage})`,
+                data: { medicationId: medication.id },
+            },
+            trigger: {
+                type: Notifications.SchedulableTriggerInputTypes.DATE,
+                date: nextTrigger,
+                channelId: "default",
+            },
+        });
+
+        return id;
     } catch (error) {
         console.error("Error Scheduling Medication Reminder", error);
         return undefined;

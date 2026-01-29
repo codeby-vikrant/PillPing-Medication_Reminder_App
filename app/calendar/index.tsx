@@ -21,6 +21,16 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+const formatTo12Hour = (time: string) => {
+  const [hour, minute] = time.split(":").map(Number);
+
+  const period = hour >= 12 ? "PM" : "AM";
+  const h = hour % 12 || 12;
+  const m = minute.toString().padStart(2, "0");
+
+  return `${h}:${m} ${period}`;
+};
+
 export default function CalendarScreen() {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -174,7 +184,9 @@ export default function CalendarScreen() {
               <View style={styles.medicationInfo}>
                 <Text style={styles.medicationName}>{medication.name}</Text>
                 <Text style={styles.medicationDosage}>{medication.dosage}</Text>
-                <Text style={styles.medicationTime}>{time}</Text>
+                <Text style={styles.medicationTime}>
+                  {formatTo12Hour(time)}
+                </Text>
               </View>
 
               {taken ? (
