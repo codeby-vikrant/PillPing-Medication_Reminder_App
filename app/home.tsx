@@ -94,7 +94,9 @@ function CircularProgress({
   return (
     <View style={styles.progressContainer}>
       <View style={styles.progressTextContainer}>
-        <Text style={styles.progressPercentage}>{Math.round(progress)}%</Text>
+        <Text style={styles.progressPercentage}>
+          {Math.round(progress * 100)}%
+        </Text>
         <Text style={styles.progressLabel}>
           {completedDoses} of {totalDoses} Doses
         </Text>
@@ -230,10 +232,12 @@ export default function HomeScreen() {
     );
   };
 
-  const progress =
-    todaysMedications.length > 0
-      ? completedDoses / (todaysMedications.length * 2)
-      : 0;
+  const totalDoses = todaysMedications.reduce(
+    (sum, med) => sum + med.times.length,
+    0,
+  );
+
+  const progress = totalDoses > 0 ? completedDoses / totalDoses : 0;
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
@@ -250,14 +254,14 @@ export default function HomeScreen() {
               <Ionicons name="notifications-outline" size={24} color="#fff" />
               {todaysMedications.length > 0 && (
                 <View style={styles.notificationBadge}>
-                  <Text style={styles.notificationCount}>3</Text>
+                  <Text style={styles.notificationCount}>{todaysMedications.length}</Text>
                 </View>
               )}
             </TouchableOpacity>
           </View>
           <CircularProgress
             progress={progress}
-            totalDoses={todaysMedications.length * 2}
+            totalDoses={totalDoses}
             completedDoses={completedDoses}
           />
         </View>
