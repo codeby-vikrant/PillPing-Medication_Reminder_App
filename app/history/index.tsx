@@ -20,11 +20,11 @@ import {
   View,
 } from "react-native";
 
-type EnrinchedDoseHistory = DoseHistory & { medication?: Medication };
+type EnrichedDoseHistory = DoseHistory & { medication?: Medication };
 
 export default function HistoryScreen() {
   const router = useRouter();
-  const [history, setHistory] = useState<EnrinchedDoseHistory[]>([]);
+  const [history, setHistory] = useState<EnrichedDoseHistory[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<
     "all" | "taken" | "missed"
   >("all");
@@ -53,18 +53,15 @@ export default function HistoryScreen() {
     }, [loadHistory]),
   );
 
-  const groupHistoryByDate = () => {
-    const grouped = history.reduce(
+  const groupHistoryByDate = (data: EnrichedDoseHistory[]) => {
+    const grouped = data.reduce(
       (acc, dose) => {
         const date = new Date(dose.timestamp).toDateString();
-
-        if (!acc[date]) {
-          acc[date] = [];
-        }
+        if (!acc[date]) acc[date] = [];
         acc[date].push(dose);
         return acc;
       },
-      {} as Record<string, EnrinchedDoseHistory[]>,
+      {} as Record<string, EnrichedDoseHistory[]>,
     );
 
     return Object.entries(grouped).sort(
@@ -79,7 +76,7 @@ export default function HistoryScreen() {
     return true;
   });
 
-  const groupedHistory = groupHistoryByDate();
+  const groupedHistory = groupHistoryByDate(filteredHistory);
 
   const handleClearAllData = () => {
     Alert.alert(
@@ -213,7 +210,8 @@ export default function HistoryScreen() {
                       {dose.medication?.dosage}
                     </Text>
                     <Text style={styles.timeText}>
-                      {new Date(dose.timestamp).toLocaleTimeString("default", {
+                      Scheduled: {dose.time} • Taken at{" "}
+                      {new Date(dose.timestamp).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
