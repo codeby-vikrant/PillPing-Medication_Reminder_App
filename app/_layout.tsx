@@ -1,15 +1,35 @@
 import {
   registerForPushNotificationsAsync,
   setupAndroidNotificationChannel,
+  updateMedicationReminders,
 } from "@/utils/notifications";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import * as Notifications from "expo-notifications";
+import { getMedicationById } from "@/utils/storage";
 
 export default function RootLayout() {
   useEffect(() => {
     setupAndroidNotificationChannel();
     registerForPushNotificationsAsync();
+  }, []);
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      async (response) => {
+        const data = response.notification.request.content.data;
+
+        if (data?.medicationId) {
+          const medicationId = String(data.medicationId);
+          const medication = await getMedicationById(medicationId);
+          if (medication) {
+            await updateMedicationReminders(medication);
+          }
+        }
+      },
+    );
+    return () => subscription.remove();
   }, []);
 
   return (
