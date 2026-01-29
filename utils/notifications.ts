@@ -7,7 +7,6 @@ let hasLoggedPushToken = false;
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
-        shouldShowAlert: true,
         shouldPlaySound: true,
         shouldSetBadge: true,
         shouldShowBanner: true,
@@ -97,7 +96,7 @@ export async function scheduleMedicationReminder(
                     seconds,
                     repeats: false,
                     channelId: "default"
-                } as Notifications.NotificationTriggerInput
+                }
             });
 
             identifiers.push(id);
