@@ -1,5 +1,5 @@
 import {
-  registerForPushNotificationsAsync,
+  // registerForPushNotificationsAsync,
   setupAndroidNotificationChannel,
   updateMedicationReminders,
 } from "@/utils/notifications";
@@ -12,7 +12,7 @@ import { getMedicationById } from "@/utils/storage";
 export default function RootLayout() {
   useEffect(() => {
     setupAndroidNotificationChannel();
-    registerForPushNotificationsAsync();
+    // registerForPushNotificationsAsync();
   }, []);
 
   useEffect(() => {

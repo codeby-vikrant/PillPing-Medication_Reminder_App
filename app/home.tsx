@@ -1,7 +1,4 @@
-import {
-  registerForPushNotificationsAsync,
-  scheduleMedicationReminder,
-} from "@/utils/notifications";
+import { scheduleMedicationReminder } from "@/utils/notifications";
 import {
   DoseHistory,
   getMedication,
@@ -177,12 +174,6 @@ export default function HomeScreen() {
 
   const setupNotifications = async () => {
     try {
-      const token = await registerForPushNotificationsAsync();
-      if (!token) {
-        console.log("Failed To Get Push Notification Token");
-        return;
-      }
-
       const medications = await getMedication();
       for (const medication of medications) {
         if (medication.reminderEnabled) {

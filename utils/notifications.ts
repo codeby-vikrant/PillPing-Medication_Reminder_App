@@ -7,10 +7,10 @@ let hasLoggedPushToken = false;
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
-        shouldPlaySound: false,
-        shouldSetBadge: false,
-        shouldShowBanner: false,
-        shouldShowList: false,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
     }),
 });
 
@@ -69,37 +69,42 @@ export async function scheduleMedicationReminder(
     try {
         const identifiers: string[] = [];
 
-        for (const time of medication.times) {
-            const [hours, minutes] = time.split(":").map(Number);
+        const getDurationDays = (duration: string): number => {
+            if (duration.includes("7")) return 7;
+            if (duration.includes("14")) return 14;
+            if (duration.includes("30")) return 30;
+            if (duration.includes("90")) return 90;
+            return 30;
+        };
 
-            const now = new Date();
-            const triggerTime = new Date();
+        const days = getDurationDays(medication.duration);
+        const startDate = new Date(medication.startDate);
 
-            triggerTime.setHours(hours);
-            triggerTime.setMinutes(minutes);
-            triggerTime.setSeconds(0);
+        for (let day = 0; day < days; day++) {
+            for (const time of medication.times) {
+                const [hours, minutes] = time.split(":").map(Number);
 
-            if (triggerTime <= now) {
-                triggerTime.setDate(triggerTime.getDate() + 1);
+                const triggerDate = new Date(startDate);
+                triggerDate.setDate(startDate.getDate() + day);
+                triggerDate.setHours(hours, minutes, 0, 0);
+
+                if (triggerDate <= new Date()) continue;
+
+                const id = await Notifications.scheduleNotificationAsync({
+                    content: {
+                        title: "Medication Reminder 💊",
+                        body: `Time to take ${medication.name} (${medication.dosage})`,
+                        data: { medicationId: medication.id },
+                    },
+                    trigger: {
+                        type: Notifications.SchedulableTriggerInputTypes.DATE,
+                        date: triggerDate,
+                        channelId: "default",
+                    }
+                });
+
+                identifiers.push(id);
             }
-
-            const seconds = Math.floor((triggerTime.getTime() - now.getTime()) / 1000);
-
-
-            const id = await Notifications.scheduleNotificationAsync({
-                content: {
-                    title: "Medication Reminder",
-                    body: `Time To Take ${medication.name} (${medication.dosage})`,
-                    data: { medicationId: medication.id },
-                },
-                trigger: {
-                    seconds,
-                    repeats: false,
-                    channelId: "default"
-                }
-            });
-
-            identifiers.push(id);
         }
 
         return identifiers;
