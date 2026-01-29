@@ -204,10 +204,8 @@ export default function HomeScreen() {
       }
     });
 
-    return () => {
-      subscription.remove();
-    };
-  });
+    return () => subscription.remove();
+  }, [loadMedications]);
 
   useFocusEffect(
     useCallback(() => {
