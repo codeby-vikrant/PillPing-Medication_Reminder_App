@@ -117,6 +117,28 @@ export default function CalendarScreen() {
     return calendar;
   };
 
+  const isMedicationActiveOnDate = (medication: Medication, date: Date) => {
+    const target = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+    ).getTime();
+
+    const startDateObj = new Date(medication.startDate);
+    const start = new Date(
+      startDateObj.getFullYear(),
+      startDateObj.getMonth(),
+      startDateObj.getDate(),
+    );
+
+    const durationDays = parseInt(medication.duration, 10);
+
+    const end = new Date(start);
+    end.setDate(start.getDate() + durationDays - 1);
+
+    return target >= start.getTime() && target <= end.getTime();
+  };
+
   const renderMedicationsForDate = () => {
     const dateStr = selectedDate.toDateString();
 
@@ -124,58 +146,69 @@ export default function CalendarScreen() {
       (dose) => new Date(dose.timestamp).toDateString() === dateStr,
     );
 
-    return medications.flatMap((medication) =>
-      medication.times.map((time) => {
-        const taken = dayDoses.some(
-          (dose) =>
-            dose.medicationId === medication.id &&
-            dose.time === time &&
-            dose.taken,
-        );
+    return medications
+      .filter((medication) =>
+        isMedicationActiveOnDate(medication, selectedDate),
+      )
+      .flatMap((medication) =>
+        medication.times.map((time) => {
+          const taken = dayDoses.some(
+            (dose) =>
+              dose.medicationId === medication.id &&
+              dose.time === time &&
+              dose.taken,
+          );
 
-        return (
-          <View key={`${medication.id}-${time}`} style={styles.medicationCard}>
+          return (
             <View
-              style={[
-                styles.medicationColor,
-                { backgroundColor: medication.color },
-              ]}
-            />
-
-            <View style={styles.medicationInfo}>
-              <Text style={styles.medicationName}>{medication.name}</Text>
-              <Text style={styles.medicationDosage}>{medication.dosage}</Text>
-              <Text style={styles.medicationTime}>{time}</Text>
-            </View>
-
-            {taken ? (
-              <View style={styles.takenBadge}>
-                <Ionicons name="checkmark-circle" size={20} color={"#0077b6"} />
-                <Text style={styles.takenText}>Taken</Text>
-              </View>
-            ) : (
-              <TouchableOpacity
+              key={`${medication.id}-${time}`}
+              style={styles.medicationCard}
+            >
+              <View
                 style={[
-                  styles.takeDoseButton,
+                  styles.medicationColor,
                   { backgroundColor: medication.color },
                 ]}
-                onPress={async () => {
-                  await recordDose(
-                    medication.id,
-                    time,
-                    true,
-                    new Date().toISOString(),
-                  );
-                  loadData();
-                }}
-              >
-                <Text style={styles.takeDoseText}>Take</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        );
-      }),
-    );
+              />
+
+              <View style={styles.medicationInfo}>
+                <Text style={styles.medicationName}>{medication.name}</Text>
+                <Text style={styles.medicationDosage}>{medication.dosage}</Text>
+                <Text style={styles.medicationTime}>{time}</Text>
+              </View>
+
+              {taken ? (
+                <View style={styles.takenBadge}>
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={20}
+                    color={"#0077b6"}
+                  />
+                  <Text style={styles.takenText}>Taken</Text>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  style={[
+                    styles.takeDoseButton,
+                    { backgroundColor: medication.color },
+                  ]}
+                  onPress={async () => {
+                    await recordDose(
+                      medication.id,
+                      time,
+                      true,
+                      new Date().toISOString(),
+                    );
+                    loadData();
+                  }}
+                >
+                  <Text style={styles.takeDoseText}>Take</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          );
+        }),
+      );
   };
 
   return (
