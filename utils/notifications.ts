@@ -90,7 +90,7 @@ export async function scheduleMedicationReminder(
                 },
                 trigger: {
                     seconds,
-                    repeats: true,
+                    repeats: false,
                     channelId: "default"
                 } as Notifications.NotificationTriggerInput
             });
