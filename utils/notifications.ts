@@ -68,6 +68,20 @@ export async function scheduleMedicationReminder(
         for (const time of medication.times) {
             const [hours, minutes] = time.split(":").map(Number);
 
+            const now = new Date();
+            const triggerTime = new Date();
+
+            triggerTime.setHours(hours);
+            triggerTime.setMinutes(minutes);
+            triggerTime.setSeconds(0);
+
+            if (triggerTime <= now) {
+                triggerTime.setDate(triggerTime.getDate() + 1);
+            }
+
+            const seconds = Math.floor((triggerTime.getTime() - now.getTime()) / 1000);
+
+
             const id = await Notifications.scheduleNotificationAsync({
                 content: {
                     title: "Medication Reminder",
@@ -75,9 +89,7 @@ export async function scheduleMedicationReminder(
                     data: { medicationId: medication.id },
                 },
                 trigger: {
-                    type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
-                    hour: hours,
-                    minute: minutes,
+                    seconds,
                     repeats: true,
                 } as Notifications.NotificationTriggerInput
             });
