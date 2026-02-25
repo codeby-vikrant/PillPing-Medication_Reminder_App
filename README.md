@@ -48,3 +48,47 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+# 💊 PillPing – Smart Medication Reminder App
+
+PillPing is a cross-platform mobile application built using **Expo (React Native)** that helps users manage their daily medications efficiently. The app allows users to add medicines, schedule reminders, and receive timely notifications — ensuring no dose is missed.
+
+---
+
+## 🚀 Features
+
+- ⏰ Smart medication reminders with local notifications  
+- ➕ Add, edit, and delete medicines  
+- 📅 Schedule doses by time and frequency  
+- 🔔 Real-time notification alerts  
+- 📱 Clean and responsive UI  
+- 🌙 Modern and user-friendly design  
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React Native (Expo)
+- **Routing:** Expo Router (File-based routing)
+- **Notifications:** Expo Notifications API
+- **State Management:** React Hooks
+- **Platform:** Android & iOS
+
+---
+
+## 📸 Screenshots
+
+<!-- Add your app screenshots below -->
+<!-- Example:
+![Home Screen](./assets/screenshots/home.png)
+-->
+
+---
+
+## 📦 Getting Started
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/codeby-vikrant/pillping.git
+cd pillping
