@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "com.codebyvikrant.pillping",
-      "googleServicesFile": "./google-services.json",
+      "googleServicesFile": "process.env.GOOGLE_SERVICES_JSON",
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/icons/adaptive-icon.png",
