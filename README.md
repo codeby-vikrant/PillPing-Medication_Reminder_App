@@ -102,6 +102,6 @@ PillPing is a cross-platform mobile application built using **Expo (React Native
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/codeby-vikrant/pillping.git](https://github.com/codeby-vikrant/PillPing-Medication_Reminder_App
+git clone https://github.com/codeby-vikrant/PillPing-Medication_Reminder_App
 cd pillping
 
